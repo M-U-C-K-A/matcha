@@ -8,6 +8,21 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   title: "Matcha",
   description: "Modern dating, classically defined.",
+  keywords: ["matcha", "dating", "social", "network", "community", "profile", "browse", "search", "chat", "notifications", "history", "database", "viewer", "map", "search", "multi-select", "tags", "seed", "script", "faker", "users", "likes", "messages", "profiles", "chats", "events", "shadcn", "components", "avatar", "slider", "tabs", "scroll-area"],
+  openGraph: {
+    title: "Matcha",
+    description: "Modern dating, classically defined.",
+    type: "website",
+    locale: "en_US",
+    siteName: "Matcha",
+  },
+  twitter: {
+    title: "Matcha",
+    description: "Modern dating, classically defined.",
+    card: "summary_large_image",
+    site: "@matcha",
+    creator: "@matcha",
+  },
 };
 
 export default function RootLayout({
