@@ -1,6 +1,6 @@
 import { email, z } from "zod";
 
-const schema = z.object({
+export const schema = z.object({
 	firstname: z.string()
 		.min(2, { message: 'Firstname too short' })
 		.max(30, { message: 'Firstname too long' })
