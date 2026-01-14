@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, Circle } from "react-leaflet"
+import { useTheme } from "next-themes"
 import "leaflet/dist/leaflet.css"
 import L from "leaflet"
 
@@ -39,18 +40,27 @@ function LocationMarker({ onLocationSelect }: { onLocationSelect?: (lat: number,
 
 export default function MapPicker({ center = [48.8566, 2.3522], radius = 50, onLocationSelect }: MapPickerProps) {
     const [selectedPos, setSelectedPos] = useState<[number, number]>(center);
+    const { theme } = useTheme();
 
     const handleSelect = (lat: number, lng: number) => {
         setSelectedPos([lat, lng]);
         onLocationSelect?.(lat, lng);
     }
 
+    const tileLayerUrl = theme === 'dark'
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+
+    const attribution = theme === 'dark'
+        ? '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+        : '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
     return (
         <div className="h-[400px] w-full rounded-md border overflow-hidden relative z-0">
-            <MapContainer center={center} zoom={10} scrollWheelZoom={true} className="h-full w-full">
+            <MapContainer center={center} zoom={5} scrollWheelZoom={true} className="h-full w-full">
                 <TileLayer
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution={attribution}
+                    url={tileLayerUrl}
                 />
                 <Marker position={selectedPos} />
                 <Circle center={selectedPos} radius={radius * 1000} pathOptions={{ color: 'blue', fillColor: 'blue', fillOpacity: 0.2 }} />
