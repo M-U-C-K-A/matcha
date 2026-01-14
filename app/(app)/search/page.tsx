@@ -82,10 +82,6 @@ export default function SearchPage() {
                     <p className="text-sm text-muted-foreground">Click on the map to change the search center.</p>
                 </div>
             </div>
-
-            <div className="min-h-[400px] flex items-center justify-center border border-dashed rounded-lg bg-slate-50/50">
-                <p className="text-muted-foreground">Results will appear here based on selected filters.</p>
-            </div>
         </div>
     )
 }

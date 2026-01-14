@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation"
 import { Bell, Heart, LogOut, MessageCircle, Search, User, Compass } from "lucide-react"
 
 import { cn } from "@/lib/utils"
+import { ModeToggle } from "@/components/mode-toggle"
 import { Button, buttonVariants } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -75,6 +76,7 @@ export function AppNavbar() {
                         {/* Command menu placeholder */}
                     </div>
                     <nav className="flex items-center space-x-2">
+                        <ModeToggle />
                         <Link
                             href="/notifications"
                             className={cn(buttonVariants({ variant: "ghost", size: "icon" }), "relative")}
