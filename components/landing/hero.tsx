@@ -6,12 +6,12 @@ export function Hero() {
     return (
         <section className="relative pt-12 pb-24 overflow-hidden">
             {/* Background Gradient */}
-            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-[#FD5D68]/10 to-transparent rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2" />
+            <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gradient-to-b from-primary/10 to-transparent rounded-full blur-3xl -z-10 translate-x-1/2 -translate-y-1/2" />
 
             <div className="max-w-7xl mx-auto px-6 text-center">
                 <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6">
                     Modern dating, <br />
-                    <span className="text-[#FD5D68] italic">classically defined.</span>
+                    <span className="text-primary italic">classically defined.</span>
                 </h1>
 
                 <p className="text-gray-500 max-w-xl mx-auto mb-10 text-lg leading-relaxed">
@@ -19,7 +19,7 @@ export function Hero() {
                 </p>
 
                 <div className="flex items-center justify-center gap-4 mb-16">
-                    <Button className="bg-[#FD5D68] hover:bg-[#E94E5A] text-white rounded-full px-8 py-6 text-lg shadow-lg shadow-[#FD5D68]/30">
+                    <Button className="bg-primary hover:bg-primary-hover text-white rounded-full px-8 py-6 text-lg shadow-lg shadow-primary/30">
                         Get Started <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                     <Button variant="outline" className="rounded-full px-8 py-6 text-lg border-gray-200">
@@ -34,7 +34,7 @@ export function Hero() {
                         <div className="relative aspect-[4/5] w-full rounded-2xl overflow-hidden mb-4 bg-gray-100">
                             {/* Fallback image if no asset available, using a placeholder color/text */}
                             <div className="absolute inset-0 bg-neutral-200 flex items-center justify-center text-neutral-400">
-                                <span className="text-4xl">👩🏻</span>
+                                <span className="text-4xl"><img src="https://images.unsplash.com/photo-1560087637-bf797bc7796a?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="" /></span>
                             </div>
                             {/* Status Badge */}
                             <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1.5 shadow-sm">
@@ -56,12 +56,12 @@ export function Hero() {
                                 ✕
                             </button>
                             <div className="flex flex-col items-center">
-                                <span className="text-xs font-bold text-[#FD5D68] mb-1">98% MATCH</span>
+                                <span className="text-xs font-bold text-primary mb-1">98% MATCH</span>
                                 <div className="h-1 w-12 bg-gray-100 rounded-full overflow-hidden">
-                                    <div className="h-full w-[98%] bg-[#FD5D68]" />
+                                    <div className="h-full w-[98%] bg-primary" />
                                 </div>
                             </div>
-                            <button className="w-12 h-12 rounded-full bg-[#FD5D68] flex items-center justify-center text-white shadow-lg shadow-[#FD5D68]/30 hover:bg-[#E94E5A] transition-colors">
+                            <button className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white shadow-lg shadow-primary/30 hover:bg-primary-hover transition-colors">
                                 <span className="sr-only">Like</span>
                                 <Heart className="w-6 h-6 fill-current" />
                             </button>

@@ -8,7 +8,7 @@ export function Navbar() {
         <nav className="flex items-center justify-between py-6 px-6 max-w-7xl mx-auto">
             <div className="flex items-center gap-2">
                 {/* Placeholder logo matching the "Pulse" style (red icon + text) */}
-                <div className="w-8 h-8 bg-[#FD5D68] rounded-tl-xl rounded-br-xl transform rotate-45" />
+                <div className="w-8 h-8 bg-primary rounded-tl-xl rounded-br-xl transform rotate-45" />
                 <span className="font-serif text-2xl font-bold tracking-tight">Matcha</span>
             </div>
 

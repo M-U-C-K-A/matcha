@@ -13,7 +13,7 @@ export function CTA() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <Button className="h-14 px-8 bg-[#FD5D68] hover:bg-[#E94E5A] text-white rounded-xl text-lg w-full sm:w-auto shadow-xl shadow-[#FD5D68]/20 flex items-center gap-3">
+                    <Button className="h-14 px-8 bg-primary hover:bg-primary-hover text-white rounded-xl text-lg w-full sm:w-auto shadow-xl shadow-primary/20 flex items-center gap-3">
                         <span>Create Account</span>
                     </Button>
                     <Button variant="outline" className="h-14 px-8 bg-white hover:bg-gray-50 text-gray-900 border-gray-200 rounded-xl text-lg w-full sm:w-auto font-medium">
