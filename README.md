@@ -1,36 +1,119 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🍵 Matcha
 
-## Getting Started
+> Because love can be industrialized too.
 
-First, run the development server:
+![Matcha Banner](https://images.unsplash.com/photo-1515541312075-8b5e98583484?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)
+*Note: This is a 42 School Project.*
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Matcha is a comprehensive dating web application built to facilitate connections between potential partners. It covers the entire user journey from registration to the final encounter, featuring intelligent matching algorithms, real-time interactions, and a polished user interface.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✨ Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 👤 User Management
+- **Secure Authentication**: Complete sign-up and login flows with email verification and password reset capabilities.
+- **Rich Profiles**: Users can personalize their profiles with:
+  - Biography and interests (tags).
+  - Gender and sexual preferences.
+  - Geolocated position (GPS or manual).
+  - Gallery with up to 5 photos.
+- **Privacy & Security**: Block and report functionalities, visibility controls.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 💘 Matching & Discovery
+- **Smart Suggestions**: intelligently suggests profiles based on:
+  - 📍 Geographic proximity.
+  - 🏷️ Common interests (tags).
+  - ⭐ Popularity score.
+- **Advanced Search**: Filter and sort community members by age, location, fame rating, and tags.
+- **Real-time Map**: Visualize potential matches on an interactive map.
 
-## Learn More
+### 💬 Interaction
+- **Instant Messaging**: Real-time chat for matched users.
+- **Live Notifications**: Get instant alerts for likes, profile views, messages, and matches.
+- **Engagement**: "Like" and "Unlike" profiles to show interest. Mutual likes trigger a "Match" permitting chat.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This project is built with a modern, performance-oriented stack, adhering to strict validtion and security standards.
 
-## Deploy on Vercel
+### Frontend
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router)
+- **Language**: [TypeScript](https://www.typescriptlang.org/)
+- **UI Library**: [Shadcn/ui](https://ui.shadcn.com/)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Maps**: [Leaflet](https://leafletjs.com/) & [React Leaflet](https://react-leaflet.js.org/)
+- **Icons**: [Lucide React](https://lucide.dev/)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Backend
+- **Database**: [PostgreSQL](https://www.postgresql.org/)
+- **Driver**: `pg` (node-postgres) - *Manual SQL queries* implementation.
+- **Validation**: [Zod](https://zod.dev/)
+- **Hashing**: Bcrypt
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js (v18+)
+- PostgreSQL
+- npm, pnpm, yarn, or bun
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/M-U-C-K-A/matcha.git
+   cd matcha
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   pnpm install
+   ```
+
+3. **Environment Setup**
+   Create a `.env` file in the root directory and add your environment variables:
+   ```env
+   DATABASE_URL="postgresql://user:password@localhost:5432/matcha"
+   # Add other necessary env vars here
+   ```
+
+4. **Initialize Database**
+   Since this project uses manual SQL queries and migrations, ensure your PostgreSQL server is running and the database is created.
+   *(You might need to run the `script/seed.ts` or `init-db.sql` if available)*
+
+5. **Run the development server**
+   ```bash
+   npm run dev
+   # or
+   pnpm dev
+   ```
+
+6. **Open the app**
+   Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+
+---
+
+## 🔒 Security
+
+Security is a core focus of this project:
+- **No ORM**: All database interactions are performed via parameterized raw SQL queries to prevent Injection attacks.
+- **Input Validation**: Strict validation on all forms and API endpoints using Zod.
+- **Password Safety**: Passwords are never stored in plain text.
+- **XSS Protection**: React/Next.js and proper sanitization ensure protection against XSS.
+
+---
+
+## 👥 Authors
+
+- [**hdelacou**](https://github.com/hdelacou)
+
+---
+
+<p align="center">
+  Made with ❤️ for 42
+</p>
