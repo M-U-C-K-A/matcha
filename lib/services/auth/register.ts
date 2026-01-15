@@ -1,20 +1,6 @@
 import pool from "@/lib/db";
+import { emailUsed } from "@/lib/utils/existing";
 import bcrypt from "bcryptjs";
-
-async function emailUsed(
-	email: string
-): Promise<Boolean> {
-	const result = await pool.query(
-		'SELECT * FROM profiles WHERE email = $1',
-		[email]
-	);
-
-	if (result.rowCount && result.rowCount > 0) {
-		return true;
-	}
-
-	return false;
-}
 
 export default async function createProfile(
 	firstname: string,

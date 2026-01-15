@@ -1,4 +1,4 @@
-import { API_ERRORS, API_SUCCESS } from "@/lib/response";
+import { API_ERRORS, API_SUCCESS } from "@/lib/utils/response";
 import createProfile from "@/lib/services/auth/register";
 import { RegisterSchema } from "@/lib/types/auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -37,7 +37,9 @@ export async function POST(req: NextRequest) {
 			password
 		);
 
-		const token = await new SignJWT({ result })
+		console.log(result);
+
+		const token = await new SignJWT({ id: result })
 		.setProtectedHeader({ alg: 'HS256' })
 		.setExpirationTime('7d')
 		.sign(new TextEncoder().encode(JWT_SECRET));
@@ -56,7 +58,6 @@ export async function POST(req: NextRequest) {
 		return response;
 
 	} catch (err: any) {
-		console.error('Registration error:', err);
 		if (err.message === 'Email already used') {
 			return NextResponse.json (
 				{ error: err.message },
