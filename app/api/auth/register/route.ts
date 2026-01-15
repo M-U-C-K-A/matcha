@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
 		return response;
 
 	} catch (err: any) {
+		console.error('Registration error:', err);
 		if (err.message === 'Email already used') {
 			return NextResponse.json (
 				{ error: err.message },

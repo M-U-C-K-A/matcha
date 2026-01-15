@@ -30,7 +30,7 @@ export default async function createProfile(
 		});
 	}
 
-	const randomSuffix = Date.now().toString();
+	const randomSuffix = Date.now().toString().slice(-6);
 	const initial = lastname.charAt(0).toUpperCase();
 	const formattedFirstname = firstname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase();
 	const username = `${formattedFirstname}_${initial}_${randomSuffix}`;
