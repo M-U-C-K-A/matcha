@@ -26,22 +26,15 @@ export function AppNavbar() {
 
     useEffect(() => {
         const checkNotifications = async () => {
-            if (!user) return
-
             try {
-                // Add timestamp to prevent caching and cache: 'no-store'
-                const res = await fetch(`/api/profile/notification/new?t=${Date.now()}`, {
+                const res = await fetch(`/api/profile/notification/new`, {
                     cache: 'no-store'
                 })
-                if (res.ok) {
-                    const data = await res.json()
-                    console.log("🔔 Notification Check:", data)
-                    // Handle both boolean true and object { new: true } just in case
-                    const hasNew = typeof data === 'object' ? data?.new : data
-                    setHasUnread(!!hasNew)
-                }
+
+                const hasNew = await res.json()
+                setHasUnread(hasNew)
             } catch (error) {
-                console.error("Failed to check notifications")
+                console.error("Failed to check notifications", error)
             }
         }
 
@@ -49,6 +42,7 @@ export function AppNavbar() {
         const interval = setInterval(checkNotifications, 10000)
         return () => clearInterval(interval)
     }, [user])
+
 
     const navItems = [
         {
@@ -112,6 +106,7 @@ export function AppNavbar() {
                                 <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-600" />
                             )}
                         </Link>
+
                         <DropdownMenu>
                             <DropdownMenuTrigger className="relative h-8 w-8 rounded-full outline-none">
                                 <Avatar className="h-8 w-8">
@@ -144,6 +139,6 @@ export function AppNavbar() {
                     </nav>
                 </div>
             </div>
-        </header>
+        </header >
     )
 }
