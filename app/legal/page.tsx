@@ -38,10 +38,12 @@ export default function LegalPage() {
 							</span>
 						</div>
 					</div>
-					<Button variant="outline" className="gap-2 shrink-0">
-						<Download className="h-4 w-4" />
-						Download PDF
-					</Button>
+					<a href="/legal-notice.pdf" download className="shrink-0">
+						<Button variant="outline" className="gap-2">
+							<Download className="h-4 w-4" />
+							Download PDF
+						</Button>
+					</a>
 				</div>
 
 				{/* Accordion Sections */}
