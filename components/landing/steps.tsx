@@ -29,7 +29,7 @@ export function Steps() {
                     <span className="inline-block py-1 px-3 rounded-full bg-pink-50 text-primary text-xs font-bold tracking-wider mb-4 uppercase">
                         How it works
                     </span>
-                    <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+                    <h2 className="font-outfit text-4xl md:text-5xl font-bold text-gray-900 mb-4">
                         Three steps to your person.
                     </h2>
                     <p className="text-gray-500 max-w-2xl mx-auto">
@@ -44,12 +44,12 @@ export function Steps() {
                                 <step.icon className="w-6 h-6 text-gray-900 group-hover:text-primary transition-colors" />
                             </div>
 
-                            <h3 className="font-serif text-xl font-bold mb-3">{step.title}</h3>
+                            <h3 className="font-outfit text-xl font-bold mb-3">{step.title}</h3>
                             <p className="text-gray-500 text-sm leading-relaxed mb-12">
                                 {step.description}
                             </p>
 
-                            <div className="absolute bottom-8 right-8 text-6xl font-serif font-bold text-gray-50 opacity-50 group-hover:text-primary/5 transition-colors select-none">
+                            <div className="absolute bottom-8 right-8 text-6xl font-outfit font-bold text-gray-50 opacity-50 group-hover:text-primary/5 transition-colors select-none">
                                 {step.number}
                             </div>
                         </div>

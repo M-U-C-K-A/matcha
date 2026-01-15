@@ -24,7 +24,7 @@ export default function NotificationsPage() {
     useEffect(() => {
         const fetchNotifications = async () => {
             try {
-                const res = await fetch("/api/notifications", {
+                const res = await fetch("/api/profile/notification", {
                     credentials: "include",
                 });
 
@@ -48,6 +48,7 @@ export default function NotificationsPage() {
 
         fetchNotifications();
     }, []);
+    console.log(notifications);
 
     const getNotificationMessage = (type: Notification["type"]) => {
         switch (type) {
@@ -83,9 +84,15 @@ export default function NotificationsPage() {
                 </div>
             )}
 
+            {/* Error State */}
+            {error && !isLoading && (
+                <div className="text-center py-12">
+                    <p className="text-sm text-destructive">{error}</p>
+                </div>
+            )}
 
             {/* Empty State */}
-            {!isLoading && !error && error && notifications.length === 0 && (
+            {!isLoading && !error && notifications.length === 0 && (
                 <Empty>
                     <EmptyHeader>
                         <EmptyMedia variant="icon">
@@ -97,14 +104,6 @@ export default function NotificationsPage() {
                         </EmptyDescription>
                     </EmptyHeader>
                 </Empty>
-            )}
-
-
-            {/* Error State */}
-            {error && !isLoading && (
-                <div className="text-center py-12">
-                    <p className="text-sm text-destructive">{error}</p>
-                </div>
             )}
 
             {/* Notifications List */}
