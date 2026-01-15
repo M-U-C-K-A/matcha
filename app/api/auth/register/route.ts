@@ -15,8 +15,9 @@ export async function POST(req: NextRequest) {
 	}
 
 	const body = await req.json();
+
 	const data = RegisterSchema.safeParse(body);
-	
+
 	if (!data.success) {
 		return NextResponse.json (
 			{ error: API_ERRORS.BAD_REQUEST },
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
 		return response;
 
 	} catch (err: any) {
-		if (err.message == 'Email already used') {
+		if (err.message === 'Email already used') {
 			return NextResponse.json (
 				{ error: err.message },
 				{ status: 409 }

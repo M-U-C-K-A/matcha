@@ -9,7 +9,7 @@ async function emailUsed(
 		[email]
 	);
 
-	if (!result) {
+	if (result.rowCount && result.rowCount > 0) {
 		return true;
 	}
 
@@ -26,7 +26,7 @@ export default async function createProfile(
 
 	if (await emailUsed(email)) {
 		throw ({
-			error: 'Email already used'
+			message: 'Email already used'
 		});
 	}
 
@@ -37,10 +37,10 @@ export default async function createProfile(
 	const result = await pool.query(
 		`INSERT INTO profiles
 		(firstname, lastname, username, birthdate, email, password)
-		VALUES ($1, $2, $3, $4, $5, $6)`,
-		[firstname, lastname, '@john_doe', formatedBirthday, email, hashedPass]
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING id`,
+		[firstname, lastname, '@john_dedweoe', formatedBirthday, email, hashedPass]
 	);
 
-	
 	return result.rows[0].id;
 }
