@@ -109,13 +109,19 @@ export default function RegisterPage() {
         setIsLoading(true);
 
         try {
+            // Map form data to backend schema
+            const { confirmPassword, birthdate, firstName, lastName, ...rest } = result.data;
+            const payload = {
+                ...rest,
+                firstname: firstName,
+                lastname: lastName,
+                birthday: format(birthdate, "yyyy-MM-dd"),
+            };
+
             const response = await fetch("/api/auth/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    ...result.data,
-                    birthdate: format(result.data.birthdate, "yyyy-MM-dd"),
-                }),
+                body: JSON.stringify(payload),
             });
 
             const data = await response.json();
