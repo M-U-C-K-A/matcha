@@ -4,10 +4,8 @@ import { existingUser } from "@/lib/utils/existing";
 export async function getUserNotifcation(
 	userId: string) {
 
-	if (await !existingUser(userId)) {
-		throw ({
-			message: 'User not found'
-		});
+	if (!(await existingUser(userId))) {
+		throw new Error('User not found');
 	}
 
 	const result = await pool.query(
@@ -24,8 +22,9 @@ export async function getUserNotifcation(
 		JOIN profiles p ON p.id = n.other_id
 		LEFT JOIN photos ph
 			ON ph.user_id = p.id
-		AND ph.profile_picture = true
+			AND ph.profile_picture = true
 		WHERE n.user_id = $1
+		  AND n.is_read = false
 		ORDER BY n.sent_at DESC
 		`,
 		[userId]
@@ -38,10 +37,8 @@ export async function seenUserNotification(
 	userId: string,
 	notifId: string ) {
 	
-	if (await !existingUser(userId)) {
-		throw ({
-			message: 'User not found'
-		});
+	if (!(await existingUser(userId))) {
+		throw new Error('User not found');
 	}
 
 	await pool.query(`
@@ -56,10 +53,9 @@ export async function seenUserNotification(
 
 export async function hasUserNotification(
 	userId: string ) : Promise<boolean> {
-	if (await !existingUser(userId)) {
-		throw ({
-			message: 'User not found'
-		});
+
+	if (!(await existingUser(userId))) {
+		throw new Error('User not found');
 	}
 
 	const result = await pool.query(
