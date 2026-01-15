@@ -45,7 +45,11 @@ export default function NotificationsPage() {
                 }
 
                 const data = await res.json();
-                setNotifications(data.notifications || []);
+                if (Array.isArray(data)) {
+                    setNotifications(data);
+                } else {
+                    setNotifications(data.notifications || []);
+                }
             } catch (err) {
                 setError("Failed to connect to the server");
             } finally {
