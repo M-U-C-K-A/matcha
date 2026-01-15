@@ -3,6 +3,7 @@ import { Outfit, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { CommandMenu } from "@/components/command-menu";
+import { AuthProvider } from "@/components/auth-provider";
 
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair" });
@@ -43,7 +44,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <AuthProvider>
+            {children}
+          </AuthProvider>
           <CommandMenu />
         </ThemeProvider>
       </body>
