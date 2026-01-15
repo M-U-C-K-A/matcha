@@ -10,13 +10,14 @@ export default async function loginUser (
 		[email]
 	)
 	
-	if (result.rowCount && result.rowCount < 1) {
+	if (!result.rowCount || result.rowCount < 1) {
 		throw ({
 			message: 'This account does not exist'
 		});
 	}
-	
-	if (await !bcrypt.compare(password, result.rows[0].password)) {
+
+	const isValid = await bcrypt.compare(password, result.rows[0].password);
+	if (!isValid) {
 		throw ({
 			message: 'Wrong Password'
 		})
