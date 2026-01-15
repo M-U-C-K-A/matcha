@@ -45,12 +45,12 @@ export default function AuthLayout({
                 </div>
 
                 <div className="flex-1 flex items-center justify-center p-6 sm:p-12">
-                    <div className="w-full max-w-md space-y-8">
+                    <div className="w-full max-w-screen-sm space-y-8">
                         {/* Mobile Logo shows here */}
                         <div className="lg:hidden flex justify-center mb-8">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-primary rounded-tl-xl rounded-br-xl transform rotate-45" />
-                                <span className="font-serif text-3xl font-bold tracking-tight">Matcha</span>
+                                <span className="font-outfit text-3xl font-bold tracking-tight">Matcha</span>
                             </div>
                         </div>
 
