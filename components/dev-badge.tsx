@@ -13,13 +13,17 @@ export default function DevBadge() {
     useEffect(() => {
         if (!isDev) return;
 
-        // Get token from cookie
-        const cookies = document.cookie.split(";").reduce((acc, cookie) => {
-            const [key, value] = cookie.trim().split("=");
-            acc[key] = value;
-            return acc;
-        }, {} as Record<string, string>);
-        setToken(cookies.token || null);
+        // Fetch token from API (cookie is httpOnly so we can't read it directly)
+        const fetchToken = async () => {
+            try {
+                const res = await fetch('/api/auth/me');
+                const data = await res.json();
+                setToken(data.token || null);
+            } catch (error) {
+                setToken(null);
+            }
+        };
+        fetchToken();
 
         // Set initial window size
         setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -77,8 +81,8 @@ export default function DevBadge() {
                             <span
                                 key={b}
                                 className={`px-1.5 py-0.5 rounded text-[10px] ${b === bp
-                                        ? "bg-blue-500 text-white"
-                                        : "bg-zinc-700 text-zinc-400"
+                                    ? "bg-blue-500 text-white"
+                                    : "bg-zinc-700 text-zinc-400"
                                     }`}
                             >
                                 {b}
@@ -91,8 +95,8 @@ export default function DevBadge() {
                         <span className="text-zinc-400">JWT Token:</span>
                         <div
                             className={`mt-1 px-2 py-1 rounded text-[10px] break-all ${token
-                                    ? "bg-green-500/20 text-green-400"
-                                    : "bg-red-500/20 text-red-400"
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-red-500/20 text-red-400"
                                 }`}
                             title={token || "No token"}
                         >

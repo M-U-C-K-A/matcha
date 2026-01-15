@@ -25,16 +25,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const router = useRouter();
 	const pathname = usePathname();
 
-	// Check auth status on mount
+	// Check auth status on mount - verify with server since token is in httpOnly cookie
 	useEffect(() => {
-		const storedToken = getToken();
-		const storedUser = getUser();
+		const checkAuth = async () => {
+			try {
+				const res = await fetch('/api/auth/me');
+				const data = await res.json();
 
-		if (storedToken && storedUser) {
-			setTokenState(storedToken);
-			setUserState(storedUser);
-		}
-		setIsLoading(false);
+				if (data.authenticated && data.token) {
+					setTokenState(data.token);
+					// Try to get user from localStorage or decode from payload
+					const storedUser = getUser();
+					if (storedUser) {
+						setUserState(storedUser);
+					} else if (data.payload?.result) {
+						// Use user data from JWT payload if available
+						setUserState(data.payload.result);
+					}
+				}
+			} catch (error) {
+				console.error('Auth check failed:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		checkAuth();
 	}, []);
 
 	// Redirect logic
@@ -47,8 +63,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		if (!isAuthenticated && !isPublicRoute) {
 			// Not authenticated and trying to access protected route
 			router.push("/auth/login");
-		} else if (isAuthenticated && pathname.startsWith("/auth/")) {
-			// Authenticated but on auth pages, redirect to browse
+		} else if (isAuthenticated && pathname.startsWith("/auth/") && pathname !== "/auth/register") {
+			// Authenticated but on auth pages (except register which has preferences modal), redirect to browse
 			router.push("/browse");
 		}
 	}, [isLoading, token, pathname, router]);

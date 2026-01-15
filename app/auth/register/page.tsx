@@ -32,29 +32,23 @@ import {
 } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
 import PreferencesModal from "@/components/preferences-modal";
+import { RegisterSchema } from "@/lib/types/auth";
 
-// Validation schema (simplified birthdate since Calendar returns Date)
-const registerSchema = z
-    .object({
-        firstName: z.string().min(2, "Prénom requis (2 caractères min)").max(50, "Prénom requis (50 caractères max)").regex(/^[a-zA-Z ]+$/),
-        lastName: z.string().min(2, "Nom requis (2 caractères min)").max(50, "Nom requis (50 caractères max)").regex(/^[a-zA-Z ]+$/),
-        email: z.string().email("Email invalide"),
-        birthdate: z.date({ message: "Date de naissance requise" }),
-        password: z
-            .string()
-            .min(8, "8 caractères minimum")
-            .regex(/[A-Z]/, "Une majuscule requise")
-            .regex(/[a-z]/, "Une minuscule requise")
-            .regex(/[0-9]/, "Un chiffre requis")
-            .regex(/[^A-Za-z0-9]/, "Un caractère spécial requis"),
+const registerFormSchema = RegisterSchema
+    .extend({
+        birthday: z.date({ message: "Date de naissance requise" }),
         confirmPassword: z.string(),
+    })
+    .omit({ birthday: true })
+    .extend({
+        birthdate: z.date({ message: "Date de naissance requise" }),
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Les mots de passe ne correspondent pas",
         path: ["confirmPassword"],
     });
 
-type FormData = z.infer<typeof registerSchema>;
+type FormData = z.infer<typeof registerFormSchema>;
 type FormErrors = Partial<Record<keyof FormData, string>>;
 
 export default function RegisterPage() {
@@ -64,8 +58,8 @@ export default function RegisterPage() {
     const [serverError, setServerError] = useState<string | null>(null);
     const [showPreferencesModal, setShowPreferencesModal] = useState(false);
     const [formData, setFormData] = useState({
-        firstName: "",
-        lastName: "",
+        firstname: "",
+        lastname: "",
         email: "",
         birthdate: undefined as Date | undefined,
         password: "",
@@ -97,10 +91,10 @@ export default function RegisterPage() {
         e.preventDefault();
         setServerError(null);
 
-        const result = registerSchema.safeParse(formData);
+        const result = registerFormSchema.safeParse(formData);
         if (!result.success) {
             const fieldErrors: FormErrors = {};
-            result.error.issues.forEach((err) => {
+            result.error.issues.forEach((err: z.ZodIssue) => {
                 const field = String(err.path[0]) as keyof FormData;
                 fieldErrors[field] = err.message;
             });
@@ -112,11 +106,9 @@ export default function RegisterPage() {
 
         try {
             // Map form data to backend schema
-            const { confirmPassword, birthdate, firstName, lastName, ...rest } = result.data;
+            const { confirmPassword, birthdate, ...rest } = result.data;
             const payload = {
                 ...rest,
-                firstname: firstName,
-                lastname: lastName,
                 birthday: format(birthdate, "yyyy-MM-dd"),
             };
 
@@ -176,26 +168,26 @@ export default function RegisterPage() {
                             )}
 
                             <div className="grid grid-cols-2 gap-3">
-                                <Field data-invalid={!!errors.firstName}>
-                                    <FieldLabel htmlFor="firstName">First name</FieldLabel>
+                                <Field data-invalid={!!errors.firstname}>
+                                    <FieldLabel htmlFor="firstname">First name</FieldLabel>
                                     <Input
-                                        id="firstName"
+                                        id="firstname"
                                         placeholder="John"
-                                        value={formData.firstName}
+                                        value={formData.firstname}
                                         onChange={handleChange}
                                     />
-                                    <FieldError>{errors.firstName}</FieldError>
+                                    <FieldError>{errors.firstname}</FieldError>
                                 </Field>
 
-                                <Field data-invalid={!!errors.lastName}>
-                                    <FieldLabel htmlFor="lastName">Last name</FieldLabel>
+                                <Field data-invalid={!!errors.lastname}>
+                                    <FieldLabel htmlFor="lastname">Last name</FieldLabel>
                                     <Input
-                                        id="lastName"
+                                        id="lastname"
                                         placeholder="Doe"
-                                        value={formData.lastName}
+                                        value={formData.lastname}
                                         onChange={handleChange}
                                     />
-                                    <FieldError>{errors.lastName}</FieldError>
+                                    <FieldError>{errors.lastname}</FieldError>
                                 </Field>
                             </div>
 
