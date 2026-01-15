@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { SlidersHorizontal, MapPin, SearchX, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,14 +31,42 @@ interface Profile {
 }
 
 export default function BrowsePage() {
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Filter State
-    const [ageRange, setAgeRange] = useState([18, 100]);
-    const [maxDistance, setMaxDistance] = useState(1000);
-    const [minFame, setMinFame] = useState(0);
-    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+    // Initial State from URL or Defaults
+    const [ageRange, setAgeRange] = useState([
+        Number(searchParams.get("minAge")) || 18,
+        Number(searchParams.get("maxAge")) || 100
+    ]);
+    const [maxDistance, setMaxDistance] = useState(
+        Number(searchParams.get("distance")) || 1000
+    );
+    const [minFame, setMinFame] = useState(
+        Number(searchParams.get("fame")) || 0
+    );
+    const [selectedTags, setSelectedTags] = useState<string[]>(
+        searchParams.get("tags")?.split(",").filter(Boolean) || []
+    );
+
+    // Sync URL with State
+    const updateUrl = useCallback((newParams: Record<string, string | number | null>) => {
+        const params = new URLSearchParams(searchParams.toString());
+
+        Object.entries(newParams).forEach(([key, value]) => {
+            if (value === null) {
+                params.delete(key);
+            } else {
+                params.set(key, String(value));
+            }
+        });
+
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    }, [pathname, router, searchParams]);
 
     useEffect(() => {
         const fetchProfiles = async () => {
@@ -80,9 +109,12 @@ export default function BrowsePage() {
     }, [profiles, ageRange, maxDistance, minFame, selectedTags]);
 
     const toggleTag = (tag: string) => {
-        setSelectedTags(prev =>
-            prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag]
-        );
+        const newTags = selectedTags.includes(tag)
+            ? selectedTags.filter(t => t !== tag)
+            : [...selectedTags, tag];
+
+        setSelectedTags(newTags);
+        updateUrl({ tags: newTags.length > 0 ? newTags.join(",") : null });
     };
 
     const clearFilters = () => {
@@ -90,6 +122,7 @@ export default function BrowsePage() {
         setMaxDistance(1000);
         setMinFame(0);
         setSelectedTags([]);
+        router.push(pathname, { scroll: false }); // Clear all query params
     };
 
     return (
@@ -122,12 +155,13 @@ export default function BrowsePage() {
                                         <span className="text-sm text-muted-foreground">{ageRange[0]} - {ageRange[1]}</span>
                                     </div>
                                     <Slider
-                                        defaultValue={[18, 100]}
+                                        defaultValue={[Number(searchParams.get("minAge")) || 18, Number(searchParams.get("maxAge")) || 100]}
                                         value={ageRange}
                                         min={18}
                                         max={100}
                                         step={1}
                                         onValueChange={(val) => setAgeRange(val as number[])}
+                                        onValueCommit={(val) => updateUrl({ minAge: val[0], maxAge: val[1] })}
                                         className="py-2"
                                     />
                                 </div>
@@ -139,12 +173,13 @@ export default function BrowsePage() {
                                         <span className="text-sm text-muted-foreground">{maxDistance} km</span>
                                     </div>
                                     <Slider
-                                        defaultValue={[1000]}
+                                        defaultValue={[Number(searchParams.get("distance")) || 1000]}
                                         value={[maxDistance]}
                                         min={1}
                                         max={1000}
                                         step={10}
                                         onValueChange={(val) => setMaxDistance((val as number[])[0])}
+                                        onValueCommit={(val) => updateUrl({ distance: val[0] })}
                                         className="py-2"
                                     />
                                 </div>
@@ -156,12 +191,13 @@ export default function BrowsePage() {
                                         <span className="text-sm text-muted-foreground">{minFame}</span>
                                     </div>
                                     <Slider
-                                        defaultValue={[0]}
+                                        defaultValue={[Number(searchParams.get("fame")) || 0]}
                                         value={[minFame]}
                                         min={0}
                                         max={100} // Assuming 100 max, adjust if needed
                                         step={1}
                                         onValueChange={(val) => setMinFame((val as number[])[0])}
+                                        onValueCommit={(val) => updateUrl({ fame: val[0] })}
                                         className="py-2"
                                     />
                                 </div>
