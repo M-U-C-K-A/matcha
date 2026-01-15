@@ -26,7 +26,7 @@ export async function PATCH(req: NextRequest) {
 
 	if (!data.success) {
 		return NextResponse.json (
-			{ error: API_ERRORS.BAD_REQUEST },
+			{ message: API_ERRORS.BAD_REQUEST },
 			{ status: 400 }
 		)
 	}
