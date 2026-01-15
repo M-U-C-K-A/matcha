@@ -111,6 +111,7 @@ Security is a core focus of this project:
 ## 👥 Authors
 
 - [**hdelacou**](https://github.com/hdelacou)
+- [**rbardet**](https://github.com/rbardet)
 
 ---
 
