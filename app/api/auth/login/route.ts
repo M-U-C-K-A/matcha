@@ -7,7 +7,6 @@ import loginUser from "@/lib/services/auth/login";
 const JWT_SECRET = process.env.JWT_SECRET
 
 export async function POST(req: NextRequest) {
-	console.log("TESTSETESTESTSE");
 	if (req.method != 'POST') {
 		return NextResponse.json (
 			{ error: API_ERRORS.METHOD_FORBIDDEN },
@@ -38,7 +37,6 @@ export async function POST(req: NextRequest) {
 		return createCookie(result);
 	} catch (err: any) {
 		if (err.message === 'This account does not exist') {
-			console.log("TESTTTTSTST");
 			return NextResponse.json (
 				{ error: err.message },
 				{ status: 404 }
