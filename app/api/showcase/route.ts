@@ -1,4 +1,3 @@
-import { hasUserNotification } from "@/lib/services/profile/notification";
 import getOptimizedMatches from "@/lib/services/showcase/matches";
 import getUserIdFromToken from "@/lib/utils/middleware";
 import { API_ERRORS } from "@/lib/utils/response";
