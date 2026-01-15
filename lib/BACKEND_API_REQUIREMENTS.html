@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matcha - Spécifications API Backend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        .code-block { background: #1e1e2e; }
+        .code-block code { color: #cdd6f4; }
+        .key { color: #89b4fa; }
+        .string { color: #a6e3a1; }
+        .comment { color: #6c7086; }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-gray-100 font-sans min-h-screen">
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="text-2xl">🍵</span>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Matcha API</h1>
+            </div>
+            <div class="hidden md:flex items-center gap-6 text-sm">
+                <a href="#auth" class="hover:text-green-400 transition-colors">Auth</a>
+                <a href="#profile" class="hover:text-green-400 transition-colors">Profil</a>
+                <a href="#browse" class="hover:text-green-400 transition-colors">Browse</a>
+                <a href="#search" class="hover:text-green-400 transition-colors">Search</a>
+                <a href="#likes" class="hover:text-green-400 transition-colors">Likes</a>
+                <a href="#chat" class="hover:text-green-400 transition-colors">Chat</a>
+                <a href="#notifications" class="hover:text-green-400 transition-colors">Notifs</a>
+                <a href="#websocket" class="hover:text-green-400 transition-colors">WebSocket</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <header class="pt-32 pb-16 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <h1 class="text-5xl font-bold mb-6 bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 bg-clip-text text-transparent">
+                Spécifications API Backend
+            </h1>
+            <p class="text-xl text-gray-400 mb-8">Documentation complète des endpoints pour le développeur backend</p>
+            <div class="flex flex-wrap justify-center gap-3">
+                <span class="px-4 py-2 bg-green-500/10 text-green-400 rounded-full text-sm border border-green-500/20">PostgreSQL</span>
+                <span class="px-4 py-2 bg-blue-500/10 text-blue-400 rounded-full text-sm border border-blue-500/20">JWT Auth</span>
+                <span class="px-4 py-2 bg-purple-500/10 text-purple-400 rounded-full text-sm border border-purple-500/20">WebSocket</span>
+                <span class="px-4 py-2 bg-orange-500/10 text-orange-400 rounded-full text-sm border border-orange-500/20">REST API</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-6 pb-20 space-y-16">
+
+        <!-- Section 1: Auth -->
+        <section id="auth" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🔐</span>
+                <h2 class="text-3xl font-bold">1. Authentification</h2>
+            </div>
+
+            <!-- POST /api/auth/register -->
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden mb-6">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                    <code class="font-mono text-green-400">/api/auth/register</code>
+                    <span class="text-gray-500 text-sm ml-auto">Inscription</span>
+                </div>
+                <div class="p-6 grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-400 mb-3">📥 Request Body</h4>
+                        <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"firstName"</span>: <span class="string">"string (2-50 chars)"</span>,
+  <span class="key">"lastName"</span>: <span class="string">"string (2-50 chars)"</span>,
+  <span class="key">"email"</span>: <span class="string">"string (email valide)"</span>,
+  <span class="key">"birthdate"</span>: <span class="string">"YYYY-MM-DD"</span>,
+  <span class="key">"password"</span>: <span class="string">"8+ chars, 1 maj, 1 min, 1 chiffre, 1 spécial"</span>
+}</code></pre>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-400 mb-3">📤 Response (201)</h4>
+                        <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"success"</span>: true,
+  <span class="key">"message"</span>: <span class="string">"Email de vérification envoyé"</span>
+}</code></pre>
+                    </div>
+                </div>
+            </article>
+
+            <!-- POST /api/auth/login -->
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden mb-6">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                    <code class="font-mono text-green-400">/api/auth/login</code>
+                    <span class="text-gray-500 text-sm ml-auto">Connexion</span>
+                </div>
+                <div class="p-6 grid md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-400 mb-3">📥 Request Body</h4>
+                        <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"emailOrUsername"</span>: <span class="string">"string"</span>,
+  <span class="key">"password"</span>: <span class="string">"string"</span>
+}</code></pre>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-400 mb-3">📤 Response (200)</h4>
+                        <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"success"</span>: true,
+  <span class="key">"user"</span>: { id, username, email, ... },
+  <span class="key">"token"</span>: <span class="string">"JWT token"</span>
+}</code></pre>
+                    </div>
+                </div>
+            </article>
+
+            <!-- Other auth endpoints -->
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-sm text-green-400">/api/auth/logout</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Déconnexion (nécessite token)</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-sm text-green-400">/api/auth/forgot-password</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Demande reset mot de passe → { email }</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-sm text-green-400">/api/auth/reset-password</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Reset → { token, password, confirmPassword }</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                        <code class="font-mono text-sm text-blue-400">/api/auth/verify-email</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Vérification email → ?token=xxx</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4 md:col-span-2">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                        <code class="font-mono text-sm text-blue-400">/api/auth/me</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Retourne l'utilisateur connecté complet (id, username, email, gender, bio, interests, photos, fameRating, location, isOnline, unreadNotificationsCount...)</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Profile -->
+        <section id="profile" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">👤</span>
+                <h2 class="text-3xl font-bold">2. Profil Utilisateur</h2>
+            </div>
+
+            <!-- GET /api/users/:id -->
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden mb-6">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                    <code class="font-mono text-blue-400">/api/users/:id</code>
+                    <span class="text-gray-500 text-sm ml-auto">Voir un profil (déclenche notif visite)</span>
+                </div>
+                <div class="p-6">
+                    <h4 class="text-sm font-semibold text-gray-400 mb-3">📤 Response (200)</h4>
+                    <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"id"</span>: number, <span class="key">"username"</span>: string, <span class="key">"firstName"</span>: string, <span class="key">"age"</span>: number,
+  <span class="key">"gender"</span>: <span class="string">"male|female|other"</span>, <span class="key">"sexualPreference"</span>: <span class="string">"male|female|both"</span>,
+  <span class="key">"bio"</span>: string, <span class="key">"interests"</span>: [string], <span class="key">"avatar"</span>: string, <span class="key">"photos"</span>: [string],
+  <span class="key">"fameRating"</span>: number, <span class="key">"city"</span>: string, <span class="key">"latitude"</span>: number, <span class="key">"longitude"</span>: number,
+  <span class="key">"isOnline"</span>: boolean, <span class="key">"lastSeen"</span>: ISO datetime,
+  <span class="key">"hasLikedMe"</span>: boolean, <span class="key">"iLikedThem"</span>: boolean, <span class="key">"isConnected"</span>: boolean, <span class="key">"isBlocked"</span>: boolean
+}</code></pre>
+                </div>
+            </article>
+
+            <!-- PUT /api/users/me -->
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden mb-6">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-yellow-500 text-black text-xs font-bold rounded">PUT</span>
+                    <code class="font-mono text-yellow-400">/api/users/me</code>
+                    <span class="text-gray-500 text-sm ml-auto">Modifier son profil</span>
+                </div>
+                <div class="p-6">
+                    <h4 class="text-sm font-semibold text-gray-400 mb-3">📥 Request Body (tous optionnels)</h4>
+                    <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"firstName"</span>: string, <span class="key">"lastName"</span>: string, <span class="key">"email"</span>: string, <span class="key">"bio"</span>: string,
+  <span class="key">"gender"</span>: <span class="string">"male|female|other"</span>, <span class="key">"sexualPreference"</span>: <span class="string">"male|female|both"</span>,
+  <span class="key">"interests"</span>: [string], <span class="key">"latitude"</span>: number, <span class="key">"longitude"</span>: number, <span class="key">"city"</span>: string
+}</code></pre>
+                </div>
+            </article>
+
+            <!-- Photos -->
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-xs text-green-400">/api/users/me/photos</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Ajouter photo (max 5) → multipart/form-data</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded">DELETE</span>
+                        <code class="font-mono text-xs text-red-400">/api/users/me/photos/:id</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Supprimer une photo</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-yellow-500 text-black text-xs font-bold rounded">PUT</span>
+                        <code class="font-mono text-xs text-yellow-400">/api/users/me/avatar</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Définir avatar → { photoUrl }</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Browse -->
+        <section id="browse" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">💘</span>
+                <h2 class="text-3xl font-bold">3. Browse & Suggestions</h2>
+            </div>
+
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden mb-6">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                    <code class="font-mono text-blue-400">/api/browse</code>
+                    <span class="text-gray-500 text-sm ml-auto">Profils suggérés (matching intelligent)</span>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-400 mb-2">🔍 Query Parameters</h4>
+                        <div class="flex flex-wrap gap-2 text-xs">
+                            <code class="bg-slate-700 px-2 py-1 rounded">sortBy=distance|fameRating|age|commonTags</code>
+                            <code class="bg-slate-700 px-2 py-1 rounded">order=asc|desc</code>
+                            <code class="bg-slate-700 px-2 py-1 rounded">minAge, maxAge</code>
+                            <code class="bg-slate-700 px-2 py-1 rounded">minFame, maxFame</code>
+                            <code class="bg-slate-700 px-2 py-1 rounded">maxDistance (km)</code>
+                            <code class="bg-slate-700 px-2 py-1 rounded">tags=tag1,tag2</code>
+                            <code class="bg-slate-700 px-2 py-1 rounded">page, limit</code>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-sm font-semibold text-gray-400 mb-2">📤 Response</h4>
+                        <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"profiles"</span>: [{ id, username, firstName, age, avatar, city, distance, fameRating, commonTags, isOnline }],
+  <span class="key">"pagination"</span>: { total, page, limit, totalPages }
+}</code></pre>
+                    </div>
+                    <div class="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 text-sm text-amber-400">
+                        ⚠️ Filtrer selon préférences sexuelles et exclure les profils bloqués
+                    </div>
+                </div>
+            </article>
+
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                    <code class="font-mono text-blue-400">/api/browse/map</code>
+                    <span class="text-gray-500 text-sm ml-auto">Utilisateurs sur la carte</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-400 mb-2">Query: ?minLat, maxLat, minLng, maxLng</p>
+                    <p class="text-sm text-gray-400">Response: { users: [{ id, username, avatar, latitude, longitude }] }</p>
+                </div>
+            </article>
+        </section>
+
+        <!-- Section 4: Search -->
+        <section id="search" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🔍</span>
+                <h2 class="text-3xl font-bold">4. Recherche Avancée</h2>
+            </div>
+
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                    <code class="font-mono text-blue-400">/api/search</code>
+                </div>
+                <div class="p-6">
+                    <h4 class="text-sm font-semibold text-gray-400 mb-2">🔍 Query Parameters</h4>
+                    <div class="flex flex-wrap gap-2 text-xs mb-4">
+                        <code class="bg-slate-700 px-2 py-1 rounded">minAge=18, maxAge=99</code>
+                        <code class="bg-slate-700 px-2 py-1 rounded">minFame=0, maxFame=100</code>
+                        <code class="bg-slate-700 px-2 py-1 rounded">latitude, longitude</code>
+                        <code class="bg-slate-700 px-2 py-1 rounded">radius (km)</code>
+                        <code class="bg-slate-700 px-2 py-1 rounded">tags=tag1,tag2</code>
+                        <code class="bg-slate-700 px-2 py-1 rounded">sortBy, order, page, limit</code>
+                    </div>
+                    <p class="text-sm text-gray-400">Response: identique à /api/browse</p>
+                </div>
+            </article>
+        </section>
+
+        <!-- Section 5: Likes -->
+        <section id="likes" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">❤️</span>
+                <h2 class="text-3xl font-bold">5. Likes & Connexions</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                        <span class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-green-400">/api/users/:id/like</code>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-400 mb-3">Liker un profil (nécessite photo de profil)</p>
+                        <pre class="code-block rounded-lg p-3 text-sm"><code>Response: { success: true, <span class="key">isMatch</span>: boolean }</code></pre>
+                    </div>
+                </article>
+
+                <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                        <span class="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded">DELETE</span>
+                        <code class="font-mono text-red-400">/api/users/:id/like</code>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-400 mb-3">Retirer un like (unlike)</p>
+                        <pre class="code-block rounded-lg p-3 text-sm"><code>Response: { success: true, <span class="key">wasConnected</span>: boolean }</code></pre>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Section 6: Block & Report -->
+        <section id="block" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🚫</span>
+                <h2 class="text-3xl font-bold">6. Block & Report</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-4">
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-xs text-green-400">/api/users/:id/block</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Bloquer utilisateur</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-red-500 text-white text-xs font-bold rounded">DELETE</span>
+                        <code class="font-mono text-xs text-red-400">/api/users/:id/block</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Débloquer utilisateur</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-xs text-green-400">/api/users/:id/report</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Signaler faux profil → { reason? }</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 7: History -->
+        <section id="history" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">📜</span>
+                <h2 class="text-3xl font-bold">7. Historique</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                        <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                        <code class="font-mono text-blue-400">/api/history/visitors</code>
+                    </div>
+                    <div class="p-6">
+                        <pre class="code-block rounded-lg p-3 text-sm"><code>{ visitors: [{ id, username, avatar, visitedAt }] }</code></pre>
+                    </div>
+                </article>
+
+                <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                        <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                        <code class="font-mono text-blue-400">/api/history/likes</code>
+                    </div>
+                    <div class="p-6">
+                        <pre class="code-block rounded-lg p-3 text-sm"><code>{ likes: [{ id, username, avatar, likedAt }] }</code></pre>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Section 8: Notifications -->
+        <section id="notifications" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🔔</span>
+                <h2 class="text-3xl font-bold">8. Notifications</h2>
+            </div>
+
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden mb-6">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                    <code class="font-mono text-blue-400">/api/notifications</code>
+                </div>
+                <div class="p-6">
+                    <p class="text-sm text-gray-400 mb-2">Query: ?unreadOnly=boolean, page, limit</p>
+                    <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"notifications"</span>: [{
+    id, <span class="key">type</span>: <span class="string">"like|visit|match|message|unlike"</span>,
+    fromUser: { id, username, avatar }, message, read, createdAt
+  }],
+  <span class="key">"unreadCount"</span>: number
+}</code></pre>
+                </div>
+            </article>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-yellow-500 text-black text-xs font-bold rounded">PUT</span>
+                        <code class="font-mono text-xs text-yellow-400">/api/notifications/:id/read</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Marquer une notification comme lue</p>
+                </div>
+                <div class="bg-slate-800/50 rounded-xl border border-slate-700/50 p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-yellow-500 text-black text-xs font-bold rounded">PUT</span>
+                        <code class="font-mono text-xs text-yellow-400">/api/notifications/read-all</code>
+                    </div>
+                    <p class="text-gray-500 text-sm">Marquer toutes comme lues</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 9: Chat -->
+        <section id="chat" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">💬</span>
+                <h2 class="text-3xl font-bold">9. Chat (Messagerie)</h2>
+            </div>
+
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden mb-6">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                    <code class="font-mono text-blue-400">/api/conversations</code>
+                    <span class="text-gray-500 text-sm ml-auto">Liste des conversations (matchs uniquement)</span>
+                </div>
+                <div class="p-6">
+                    <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{
+  <span class="key">"conversations"</span>: [{
+    id, user: { id, username, avatar, isOnline },
+    lastMessage: { content, sentAt, isFromMe }, unreadCount
+  }]
+}</code></pre>
+                </div>
+            </article>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                        <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                        <code class="font-mono text-xs text-blue-400">/api/conversations/:userId/messages</code>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-400 mb-2">Query: ?before=datetime, limit=50</p>
+                        <pre class="code-block rounded-lg p-3 text-sm"><code>{ messages: [{ id, content, sentAt, isFromMe, read }], hasMore }</code></pre>
+                    </div>
+                </article>
+
+                <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                    <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                        <span class="px-3 py-1 bg-green-500 text-white text-xs font-bold rounded">POST</span>
+                        <code class="font-mono text-xs text-green-400">/api/conversations/:userId/messages</code>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-sm text-gray-400 mb-2">Body: { content: string (max 1000 chars) }</p>
+                        <p class="text-sm text-amber-400">⚠️ Utilisateurs connectés (match) uniquement</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Section 10: WebSocket -->
+        <section id="websocket" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🔄</span>
+                <h2 class="text-3xl font-bold">10. WebSocket (Temps Réel)</h2>
+            </div>
+
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-purple-500 text-white text-xs font-bold rounded">WS</span>
+                    <code class="font-mono text-purple-400">ws://[host]/ws?token=JWT</code>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div class="bg-slate-700/50 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-purple-400 mb-2">Notification</h4>
+                            <pre class="text-xs text-gray-400"><code>{ type: "notification", payload: { id, type, fromUser, createdAt } }</code></pre>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-purple-400 mb-2">Message</h4>
+                            <pre class="text-xs text-gray-400"><code>{ type: "message", payload: { conversationId, message } }</code></pre>
+                        </div>
+                        <div class="bg-slate-700/50 rounded-lg p-4">
+                            <h4 class="text-sm font-semibold text-purple-400 mb-2">Statut Online</h4>
+                            <pre class="text-xs text-gray-400"><code>{ type: "user_status", payload: { userId, isOnline, lastSeen } }</code></pre>
+                        </div>
+                    </div>
+                    <div class="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4 text-sm text-amber-400">
+                        ⚠️ Délai maximum: 10 secondes pour les notifications temps réel
+                    </div>
+                </div>
+            </article>
+        </section>
+
+        <!-- Section 11: Tags -->
+        <section id="tags" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">🏷️</span>
+                <h2 class="text-3xl font-bold">11. Tags (Intérêts)</h2>
+            </div>
+
+            <article class="bg-slate-800/50 rounded-2xl border border-slate-700/50 overflow-hidden">
+                <div class="flex items-center gap-3 px-6 py-4 border-b border-slate-700/50">
+                    <span class="px-3 py-1 bg-blue-500 text-white text-xs font-bold rounded">GET</span>
+                    <code class="font-mono text-blue-400">/api/tags</code>
+                    <span class="text-gray-500 text-sm ml-auto">Pour autocomplétion</span>
+                </div>
+                <div class="p-6">
+                    <pre class="code-block rounded-lg p-4 text-sm overflow-x-auto"><code>{ <span class="key">"tags"</span>: [{ id, name, usageCount }] }</code></pre>
+                </div>
+            </article>
+        </section>
+
+        <!-- Notes -->
+        <section id="notes" class="scroll-mt-24">
+            <div class="flex items-center gap-3 mb-8">
+                <span class="text-3xl">📝</span>
+                <h2 class="text-3xl font-bold">Notes Importantes</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/20 rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold text-red-400 mb-4">🔒 Sécurité</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>• JWT obligatoire sur tous les endpoints (sauf auth publics)</li>
+                        <li>• Validation Zod côté serveur</li>
+                        <li>• Requêtes SQL paramétrées (pas d'ORM)</li>
+                        <li>• Hashage bcrypt pour les mots de passe</li>
+                        <li>• Sanitization contre XSS</li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-green-500/10 to-green-600/5 border border-green-500/20 rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold text-green-400 mb-4">🗄️ Base de données</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>• PostgreSQL avec driver pg</li>
+                        <li>• Requêtes SQL manuelles (pas d'ORM)</li>
+                        <li>• Minimum 500 profils pour l'évaluation</li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border border-blue-500/20 rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold text-blue-400 mb-4">⭐ Fame Rating</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>• Basé sur likes reçus</li>
+                        <li>• Nombre de visites profil</li>
+                        <li>• Ratio likes/unlike</li>
+                        <li>• Complétude du profil</li>
+                    </ul>
+                </div>
+                <div class="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border border-purple-500/20 rounded-2xl p-6">
+                    <h3 class="text-lg font-semibold text-purple-400 mb-4">💘 Matching</h3>
+                    <ul class="space-y-2 text-sm text-gray-300">
+                        <li>• Priorité: proximité géo > tags communs > fame</li>
+                        <li>• Filtrage par orientation sexuelle</li>
+                        <li>• Exclusion des profils bloqués</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-700/50 py-8 text-center text-gray-500 text-sm">
+        <p>Document généré le 2026-01-15 • Matcha API Specifications • 42 School Project</p>
+    </footer>
+</body>
+</html>
