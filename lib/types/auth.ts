@@ -27,3 +27,16 @@ export const RegisterSchema = z.object({
 		.regex(/\d/, { message: 'The password need to have at least 1 digit' })
 		.regex(/[^A-Za-z0-9]/, { message: 'The password need to have at least 1 special character' }),
 });
+
+export const LoginSchema = z.object({
+	email: z.email({ message: 'Invalid email' })
+		.min(5, { message: 'Email too short' })
+		.max(100, { message: 'Email too long' }),
+	password: z.string()
+		.min(6, { message: 'Password too short' })
+		.max(30, { message: 'Password too long' })
+		.regex(/[a-z]/, { message: 'The password need to have at least 1 lowercase character' })
+		.regex(/[A-Z]/, { message: 'The password need to have at least 1 uppercase character' })
+		.regex(/\d/, { message: 'The password need to have at least 1 digit' })
+		.regex(/[^A-Za-z0-9]/, { message: 'The password need to have at least 1 special character' }),
+})
