@@ -16,9 +16,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useAuth } from "@/components/auth-provider"
 
 export function AppNavbar() {
     const pathname = usePathname()
+    const { user, logout } = useAuth()
 
     const navItems = [
         {
@@ -95,9 +97,9 @@ export function AppNavbar() {
                             <DropdownMenuContent className="w-56" align="end">
                                 <DropdownMenuLabel className="font-normal">
                                     <div className="flex flex-col space-y-1">
-                                        <p className="text-sm font-medium leading-none">shadcn</p>
+                                        <p className="text-sm font-medium leading-none">{user?.username || user?.firstName || "User"}</p>
                                         <p className="text-xs leading-none text-muted-foreground">
-                                            m@example.com
+                                            {user?.email || ""}
                                         </p>
                                     </div>
                                 </DropdownMenuLabel>
@@ -108,11 +110,9 @@ export function AppNavbar() {
                                         <span>Profile</span>
                                     </Link>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                    <div className="flex items-center w-full">
-                                        <LogOut className="mr-2 h-4 w-4" />
-                                        <span>Log out</span>
-                                    </div>
+                                <DropdownMenuItem onClick={logout} className="cursor-pointer">
+                                    <LogOut className="mr-2 h-4 w-4" />
+                                    <span>Log out</span>
                                 </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
