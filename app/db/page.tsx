@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState, useMemo } from "react"
-import { Database, RefreshCw, Table as TableIcon, ChevronLeft, ChevronRight, Filter, Columns, Search, X } from "lucide-react"
+import { Database, RefreshCw, Table as TableIcon, ChevronLeft, ChevronRight, Filter, Columns, Search, X, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -60,6 +60,10 @@ export default function DbPage() {
     const [filterColumn, setFilterColumn] = useState<string>("")
     const [filterValue, setFilterValue] = useState("")
 
+    // Sort state: null = no sort, 'asc' = ascending, 'desc' = descending
+    const [sortColumn, setSortColumn] = useState<string | null>(null)
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc' | null>(null)
+
     // Check if we are in development mode
     const isDev = process.env.NODE_ENV === "development"
 
@@ -84,7 +88,28 @@ export default function DbPage() {
         setHiddenColumns(new Set())
         setFilterColumn("")
         setFilterValue("")
+        setSortColumn(null)
+        setSortDirection(null)
         fetchTableData(table, rowsPerPage, 0)
+    }
+
+    // Handle column header click for sorting
+    const handleSort = (columnName: string) => {
+        if (sortColumn !== columnName) {
+            // New column: start with asc
+            setSortColumn(columnName)
+            setSortDirection('asc')
+        } else if (sortDirection === 'asc') {
+            // Same column, was asc: switch to desc
+            setSortDirection('desc')
+        } else if (sortDirection === 'desc') {
+            // Same column, was desc: reset
+            setSortColumn(null)
+            setSortDirection(null)
+        } else {
+            // Was null: start with asc
+            setSortDirection('asc')
+        }
     }
 
     const handlePageChange = (newPage: number) => {
@@ -123,12 +148,43 @@ export default function DbPage() {
 
     // Filter rows client-side
     const filteredRows = useMemo(() => {
-        if (!tableData || !filterColumn || !filterValue) return tableData?.rows || []
-        return tableData.rows.filter(row => {
-            const cellValue = String(row[filterColumn] ?? "").toLowerCase()
-            return cellValue.includes(filterValue.toLowerCase())
-        })
-    }, [tableData, filterColumn, filterValue])
+        if (!tableData) return []
+        let rows = tableData.rows
+
+        // Apply filter
+        if (filterColumn && filterValue) {
+            rows = rows.filter(row => {
+                const cellValue = String(row[filterColumn] ?? "").toLowerCase()
+                return cellValue.includes(filterValue.toLowerCase())
+            })
+        }
+
+        // Apply sort
+        if (sortColumn && sortDirection) {
+            rows = [...rows].sort((a, b) => {
+                const aVal = a[sortColumn]
+                const bVal = b[sortColumn]
+
+                // Handle null/undefined
+                if (aVal == null && bVal == null) return 0
+                if (aVal == null) return sortDirection === 'asc' ? 1 : -1
+                if (bVal == null) return sortDirection === 'asc' ? -1 : 1
+
+                // Compare values
+                if (typeof aVal === 'number' && typeof bVal === 'number') {
+                    return sortDirection === 'asc' ? aVal - bVal : bVal - aVal
+                }
+
+                const aStr = String(aVal).toLowerCase()
+                const bStr = String(bVal).toLowerCase()
+                if (aStr < bStr) return sortDirection === 'asc' ? -1 : 1
+                if (aStr > bStr) return sortDirection === 'asc' ? 1 : -1
+                return 0
+            })
+        }
+
+        return rows
+    }, [tableData, filterColumn, filterValue, sortColumn, sortDirection])
 
     const visibleColumns = useMemo(() => {
         if (!tableData) return []
@@ -317,11 +373,26 @@ export default function DbPage() {
                                     <TableHeader>
                                         <TableRow>
                                             {visibleColumns.map((col) => (
-                                                <TableHead key={col.column_name} className="whitespace-nowrap">
-                                                    {col.column_name}
-                                                    <span className="ml-1 text-xs text-muted-foreground font-normal">
-                                                        ({col.data_type})
-                                                    </span>
+                                                <TableHead
+                                                    key={col.column_name}
+                                                    className="whitespace-nowrap cursor-pointer hover:bg-muted/50 select-none"
+                                                    onClick={() => handleSort(col.column_name)}
+                                                >
+                                                    <div className="flex items-center gap-1">
+                                                        {col.column_name}
+                                                        <span className="text-xs text-muted-foreground font-normal">
+                                                            ({col.data_type})
+                                                        </span>
+                                                        {sortColumn === col.column_name ? (
+                                                            sortDirection === 'asc' ? (
+                                                                <ArrowUp className="w-3 h-3 text-primary" />
+                                                            ) : (
+                                                                <ArrowDown className="w-3 h-3 text-primary" />
+                                                            )
+                                                        ) : (
+                                                            <ArrowUpDown className="w-3 h-3 text-muted-foreground/50" />
+                                                        )}
+                                                    </div>
                                                 </TableHead>
                                             ))}
                                         </TableRow>
