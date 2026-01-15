@@ -92,7 +92,21 @@ export default function DevBadge() {
 
                     {/* JWT Token */}
                     <div className="pt-2 border-t border-zinc-700">
-                        <span className="text-zinc-400">JWT Token:</span>
+                        <div className="flex items-center justify-between">
+                            <span className="text-zinc-400">JWT Token:</span>
+                            {token && (
+                                <button
+                                    onClick={async () => {
+                                        await fetch('/api/auth/logout', { method: 'POST' });
+                                        setToken(null);
+                                        window.location.reload();
+                                    }}
+                                    className="px-2 py-0.5 text-[10px] bg-red-500/20 text-red-400 rounded hover:bg-red-500/40 transition-colors"
+                                >
+                                    Clear Token
+                                </button>
+                            )}
+                        </div>
                         <div
                             className={`mt-1 px-2 py-1 rounded text-[10px] break-all ${token
                                 ? "bg-green-500/20 text-green-400"
