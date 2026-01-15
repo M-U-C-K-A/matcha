@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
 import { Bell, Heart, LogOut, MessageCircle, Search, User, Compass } from "lucide-react"
 
@@ -21,6 +22,27 @@ import { useAuth } from "@/components/auth-provider"
 export function AppNavbar() {
     const pathname = usePathname()
     const { user, logout } = useAuth()
+    const [hasUnread, setHasUnread] = useState(false)
+
+    useEffect(() => {
+        const checkNotifications = async () => {
+            if (!user) return
+
+            try {
+                const res = await fetch('/api/profile/notification/new')
+                if (res.ok) {
+                    const data = await res.json()
+                    setHasUnread(data)
+                }
+            } catch (error) {
+                console.error("Failed to check notifications")
+            }
+        }
+
+        checkNotifications()
+        const interval = setInterval(checkNotifications, 10000)
+        return () => clearInterval(interval)
+    }, [user])
 
     const navItems = [
         {
@@ -80,7 +102,9 @@ export function AppNavbar() {
                         >
                             <Bell className="h-4 w-4" />
                             <span className="sr-only">Notifications</span>
-                            <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-600" />
+                            {hasUnread && (
+                                <span className="absolute top-2 right-2 h-2 w-2 rounded-full bg-red-600" />
+                            )}
                         </Link>
                         <DropdownMenu>
                             <DropdownMenuTrigger className="relative h-8 w-8 rounded-full outline-none">
