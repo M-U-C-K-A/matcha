@@ -15,7 +15,6 @@ export default async function getUserIdFromToken(req: NextRequest) {
 			new TextEncoder().encode(JWT_SECRET)
 		);
 
-		console.log
 		return payload.id as string;
 	} catch (err) {
 		return null;
