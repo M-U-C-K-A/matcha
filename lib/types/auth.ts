@@ -27,3 +27,12 @@ export const RegisterSchema = z.object({
 		.regex(/\d/, { message: 'The password need to have at least 1 digit' })
 		.regex(/[^A-Za-z0-9]/, { message: 'The password need to have at least 1 special character' }),
 });
+
+export const PreferencesSchema = z.object({
+	bio: z.string().max(255, { message: 'Bio too long' }).optional(),
+	gender: z.enum(['male', 'female', 'non-binary']).optional(),
+	sex_preference: z.enum(['male', 'female', 'bisexual']).optional(),
+	city: z.string().max(100).optional(),
+	latitude: z.number().min(-90).max(90).optional(),
+	longitude: z.number().min(-180).max(180).optional(),
+});
