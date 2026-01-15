@@ -25,16 +25,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	const router = useRouter();
 	const pathname = usePathname();
 
-	// Check auth status on mount
+	// Check auth status on mount via API (JWT is in httpOnly cookie)
 	useEffect(() => {
-		const storedToken = getToken();
-		const storedUser = getUser();
+		const checkAuth = async () => {
+			try {
+				const res = await fetch('/api/auth/me');
+				const data = await res.json();
 
-		if (storedToken && storedUser) {
-			setTokenState(storedToken);
-			setUserState(storedUser);
-		}
-		setIsLoading(false);
+				if (data.authenticated && data.userId) {
+					setTokenState("authenticated"); // We don't have the actual token, just the status
+					// Try to get user from localStorage (user info is not sensitive)
+					const storedUser = getUser();
+					if (storedUser) {
+						setUserState(storedUser);
+					}
+				}
+			} catch (error) {
+				console.error('Auth check failed:', error);
+			} finally {
+				setIsLoading(false);
+			}
+		};
+
+		checkAuth();
 	}, []);
 
 	// Redirect logic
@@ -54,9 +67,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 	}, [isLoading, token, pathname, router]);
 
 	const login = (newToken: string, newUser: User) => {
-		setToken(newToken);
-		setUser(newUser);
-		setTokenState(newToken);
+		// Token is stored in httpOnly cookie by the server, we just update state
+		setUser(newUser); // Store user info in localStorage (not sensitive)
+		setTokenState("authenticated");
 		setUserState(newUser);
 		router.push("/browse");
 	};

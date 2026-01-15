@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 
 export default function DevBadge() {
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+    const [userId, setUserId] = useState<string | null>(null);
     const [windowSize, setWindowSize] = useState({ width: 0, height: 0 });
     const [isVisible, setIsVisible] = useState(false);
 
@@ -11,6 +13,20 @@ export default function DevBadge() {
 
     useEffect(() => {
         if (!isDev) return;
+
+        // Fetch auth status from API
+        const fetchAuth = async () => {
+            try {
+                const res = await fetch('/api/auth/me');
+                const data = await res.json();
+                setIsAuthenticated(data.authenticated);
+                setUserId(data.userId || null);
+            } catch (error) {
+                setIsAuthenticated(false);
+                setUserId(null);
+            }
+        };
+        fetchAuth();
 
         // Set initial window size
         setWindowSize({ width: window.innerWidth, height: window.innerHeight });
@@ -32,6 +48,13 @@ export default function DevBadge() {
         if (width < 1280) return "lg";
         if (width < 1536) return "xl";
         return "2xl";
+    };
+
+    const handleLogout = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        setIsAuthenticated(false);
+        setUserId(null);
+        window.location.reload();
     };
 
     const bp = getBreakpoint(windowSize.width);
@@ -75,9 +98,35 @@ export default function DevBadge() {
                             </span>
                         ))}
                     </div>
+
+                    {/* Auth Status */}
+                    <div className="pt-2 border-t border-zinc-700">
+                        <div className="flex items-center justify-between">
+                            <span className="text-zinc-400">Auth:</span>
+                            {isAuthenticated && (
+                                <button
+                                    onClick={handleLogout}
+                                    className="px-2 py-0.5 text-[10px] bg-red-500/20 text-red-400 rounded hover:bg-red-500/40 transition-colors"
+                                >
+                                    Logout
+                                </button>
+                            )}
+                        </div>
+                        <div
+                            className={`mt-1 px-2 py-1 rounded text-[10px] ${isAuthenticated
+                                ? "bg-green-500/20 text-green-400"
+                                : "bg-red-500/20 text-red-400"
+                                }`}
+                        >
+                            {isAuthenticated === null
+                                ? "Loading..."
+                                : isAuthenticated
+                                    ? `✓ Authenticated (ID: ${userId})`
+                                    : "✗ Not authenticated"}
+                        </div>
+                    </div>
                 </div>
             )}
         </div>
     );
 }
-
