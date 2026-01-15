@@ -6,15 +6,22 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Empty, EmptyHeader, EmptyMedia, EmptyTitle, EmptyDescription } from "@/components/ui/empty";
 import { Bell, Loader2 } from "lucide-react";
+import { HoverCard } from "@/components/ui/hover-card";
 
 interface Notification {
     id: number;
     type: "like" | "unlike" | "profile_consulted" | "new_message" | "like_back";
-    user: string;
-    user_avatar?: string;
-    time: string;
-    read: boolean;
+    other_user_id: number;
+    other_username: string;
+    other_avatar: string | null;
+    sent_at: string;
+    is_read: boolean;
 }
+
+const getAvatarUrl = (avatar: string | null, username: string): string => {
+    if (avatar) return avatar;
+    return `https://api.dicebear.com/9.x/initials/svg?seed=${encodeURIComponent(username)}`;
+};
 
 export default function NotificationsPage() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
@@ -48,7 +55,25 @@ export default function NotificationsPage() {
 
         fetchNotifications();
     }, []);
-    console.log(notifications);
+
+    const markAsSeen = async (notifId: number) => {
+        const notif = notifications.find(n => n.id === notifId);
+        if (!notif || notif.is_read) return;
+
+        try {
+            await fetch("/api/profile/notification/seen", {
+                method: "POST",
+                credentials: "include",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ id: notifId }),
+            });
+            setNotifications(prev =>
+                prev.map(n => n.id === notifId ? { ...n, is_read: true } : n)
+            );
+        } catch (err) {
+            console.error("Failed to mark notification as seen", err);
+        }
+    };
 
     const getNotificationMessage = (type: Notification["type"]) => {
         switch (type) {
@@ -112,20 +137,21 @@ export default function NotificationsPage() {
                     {notifications.map((notif) => (
                         <div
                             key={notif.id}
-                            className={`flex items-center gap-4 p-4 rounded-lg border ${notif.read ? "bg-background" : "bg-muted/30"}`}
+                            className={`flex items-center gap-4 p-4 rounded-lg border cursor-pointer transition-colors ${notif.is_read ? "bg-background" : "bg-muted/30"}`}
+                            onMouseEnter={() => markAsSeen(notif.id)}
                         >
                             <Avatar>
-                                <AvatarImage src={notif.user_avatar || `/avatars/${notif.id}.png`} />
-                                <AvatarFallback>{notif.user[0]}</AvatarFallback>
+                                <AvatarImage src={getAvatarUrl(notif.other_avatar, notif.other_username)} />
+                                <AvatarFallback>{notif.other_username.slice(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
                                 <p className="text-sm">
-                                    <span className="font-semibold">{notif.user}</span>
+                                    <span className="font-semibold"><HoverCard>@{notif.other_username}</HoverCard></span>
                                     {getNotificationMessage(notif.type)}
                                 </p>
-                                <p className="text-xs text-muted-foreground">{notif.time}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(notif.sent_at).toLocaleString()}</p>
                             </div>
-                            {!notif.read && (
+                            {!notif.is_read && (
                                 <Badge variant="default" className="h-2 w-2 rounded-full p-0" />
                             )}
                         </div>
