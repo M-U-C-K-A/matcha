@@ -29,10 +29,16 @@ export function AppNavbar() {
             if (!user) return
 
             try {
-                const res = await fetch('/api/profile/notification/new')
+                // Add timestamp to prevent caching and cache: 'no-store'
+                const res = await fetch(`/api/profile/notification/new?t=${Date.now()}`, {
+                    cache: 'no-store'
+                })
                 if (res.ok) {
                     const data = await res.json()
-                    setHasUnread(data)
+                    console.log("🔔 Notification Check:", data)
+                    // Handle both boolean true and object { new: true } just in case
+                    const hasNew = typeof data === 'object' ? data?.new : data
+                    setHasUnread(!!hasNew)
                 }
             } catch (error) {
                 console.error("Failed to check notifications")

@@ -69,7 +69,7 @@ export default function NotificationsPage() {
                 method: "POST",
                 credentials: "include",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ id: notifId }),
+                body: JSON.stringify({ notifId: notifId }),
             });
             setNotifications(prev =>
                 prev.map(n => n.id === notifId ? { ...n, is_read: true } : n)
