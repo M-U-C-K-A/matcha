@@ -14,7 +14,7 @@ export default function LoginPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [formData, setFormData] = useState({
-        emailOrUsername: "",
+        email: "",
         password: "",
     });
 
@@ -67,12 +67,12 @@ export default function LoginPage() {
                         </div>
                     )}
                     <div className="grid gap-2">
-                        <Label htmlFor="emailOrUsername">Email or Username</Label>
+                        <Label htmlFor="email">Email</Label>
                         <Input
-                            id="emailOrUsername"
+                            id="email"
                             type="text"
                             placeholder="m@example.com"
-                            value={formData.emailOrUsername}
+                            value={formData.email}
                             onChange={handleChange}
                             disabled={isLoading}
                         />
