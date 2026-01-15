@@ -30,6 +30,11 @@ export default async function createProfile(
 		});
 	}
 
+	const randomSuffix = Date.now().toString();
+	const initial = lastname.charAt(0).toUpperCase();
+	const formattedFirstname = firstname.charAt(0).toUpperCase() + firstname.slice(1).toLowerCase();
+	const username = `${formattedFirstname}_${initial}_${randomSuffix}`;
+	
 	const hashedPass = await bcrypt.hash(password, 10);
 
 	const formatedBirthday = new Date(birthday);
@@ -39,7 +44,7 @@ export default async function createProfile(
 		(firstname, lastname, username, birthdate, email, password)
 		VALUES ($1, $2, $3, $4, $5, $6)
 		RETURNING id`,
-		[firstname, lastname, '@john_dedweoe', formatedBirthday, email, hashedPass]
+		[firstname, lastname, username, formatedBirthday, email, hashedPass]
 	);
 
 	return result.rows[0].id;
