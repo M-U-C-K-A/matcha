@@ -38,11 +38,6 @@ export function AppNavbar() {
             href: "/chat",
             icon: MessageCircle,
         },
-        {
-            title: "History",
-            href: "/history",
-            icon: Heart,
-        },
     ]
 
     return (
