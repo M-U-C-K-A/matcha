@@ -1,27 +1,70 @@
-import { email, z } from "zod";
+import { API_ERRORS, API_SUCCESS } from "@/lib/response";
+import createProfile from "@/lib/services/auth/register";
+import { RegisterSchema } from "@/lib/types/auth";
+import { NextRequest, NextResponse } from "next/server";
+import { SignJWT } from 'jose';
 
-export const schema = z.object({
-	firstname: z.string()
-		.min(2, { message: 'Firstname too short' })
-		.max(30, { message: 'Firstname too long' })
-		.regex(/^[A-Za-zÀ-ÖØ-öø-ÿ'-]+$/, {
-		  message: 'Firstname contains invalid characters',
-		}),
-	lastname: z.string()
-		.min(2, { message: 'Lastname too short' })
-		.max(30, { message: 'Lastname too long' })
-		.regex(/^[A-Za-zÀ-ÖØ-öø-ÿ'-]+$/, {
-		  message: 'Lastname contains invalid characters',
-		}),
-	birthday: z.date(),
-	email: z.email({ message: 'Invalid email' })
-		.min(5, { message: 'Email too short' })
-		.max(100, { message: 'Email too long' }),
-	password: z.string()
-		.min(6, { message: 'Password too short' })
-		.max(30, { message: 'Password too long' })
-		.regex(/[a-z]/, { message: 'The password need to have at least 1 lowercase character' })
-		.regex(/[A-Z]/, { message: 'The password need to have at least 1 uppercase character' })
-		.regex(/\d/, { message: 'The password need to have at least 1 digit' })
-		.regex(/[^A-Za-z0-9]/, { message: 'The password need to have at least 1 special character' }),
-});
+const JWT_SECRET = process.env.JWT_SECRET
+
+export async function POST(req: NextRequest) {
+	if (req.method != 'POST') {
+		return NextResponse.json (
+			{ error: API_ERRORS.METHOD_FORBIDDEN },
+			{ status: 405 }
+		)
+	}
+
+	const body = await req.json();
+	const data = RegisterSchema.safeParse(body);
+	
+	if (!data.success) {
+		return NextResponse.json (
+			{ error: API_ERRORS.BAD_REQUEST },
+			{ status: 400 }
+		)
+	}
+
+	const { firstname, lastname, birthday, email, password } = data.data;
+	
+	try {
+		const result = await createProfile
+		(
+			firstname,
+			lastname,
+			birthday,
+			email,
+			password
+		);
+
+		const token = await new SignJWT({ result })
+		.setProtectedHeader({ alg: 'HS256' })
+		.setExpirationTime('7d')
+		.sign(new TextEncoder().encode(JWT_SECRET));
+
+		const response = NextResponse.json(
+			{ message: API_SUCCESS.CREATED },
+			{ status: 201 });
+			response.cookies.set('token', token, {
+			httpOnly: true,
+			secure: process.env.NODE_ENV === 'production',
+			sameSite: 'lax',
+			path: '/',
+			maxAge: 7 * 24 * 60 * 60,
+		});
+
+		return response;
+
+	} catch (err: any) {
+		if (err.message == 'Email already used') {
+			return NextResponse.json (
+				{ error: err.message },
+				{ status: 409 }
+			)
+		}
+
+		return NextResponse.json (
+			{ error: API_ERRORS.INTERNAL_ERROR },
+			{ status: 500 }
+		)
+	}
+}
