@@ -7,7 +7,7 @@ export function Navbar() {
         <nav className="flex items-center justify-between py-6 px-6 max-w-7xl mx-auto">
             <div className="flex items-center gap-2">
                 <span className="text-2xl">🍵</span>
-                <span className="font-serif text-2xl font-bold tracking-tight">Matcha</span>
+                <span className="font-outfit text-2xl font-bold tracking-tight">Matcha</span>
             </div>
 
             <div className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">

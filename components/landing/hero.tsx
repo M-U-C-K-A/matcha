@@ -10,7 +10,7 @@ export function Hero() {
             <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-gradient-to-t from-green-100 to-transparent rounded-full blur-3xl -z-10 -translate-x-1/2 translate-y-1/2" />
 
             <div className="max-w-7xl mx-auto px-6 text-center">
-                <h1 className="font-serif text-5xl md:text-7xl font-bold tracking-tight mb-6">
+                <h1 className="font-outfit text-5xl md:text-7xl font-bold tracking-tight mb-6">
                     Rencontrez près de chez vous,<br />
                     <span className="text-primary italic">authentiquement.</span>
                 </h1>

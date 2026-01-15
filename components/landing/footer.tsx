@@ -4,7 +4,7 @@ export function Footer() {
             <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-center gap-2">
                     <div className="w-6 h-6 bg-primary rounded-tl-lg rounded-br-lg transform rotate-45" />
-                    <span className="font-serif text-xl font-bold text-gray-900 tracking-tight">Matcha</span>
+                    <span className="font-outfit text-xl font-bold text-gray-900 tracking-tight">Matcha</span>
                 </div>
 
                 <div className="flex flex-wrap items-center justify-center gap-8">
