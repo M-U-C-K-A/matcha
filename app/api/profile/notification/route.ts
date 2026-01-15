@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
 		)
 
 		return NextResponse.json (
-			{ result },
+			result,
 			{ status: 200 }
 		);
 	} catch (err: any) {
