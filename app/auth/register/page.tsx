@@ -31,6 +31,7 @@ import {
     FieldGroup,
 } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
+import PreferencesModal from "@/components/preferences-modal";
 
 // Validation schema (simplified birthdate since Calendar returns Date)
 const registerSchema = z
@@ -61,6 +62,7 @@ export default function RegisterPage() {
     const [isLoading, setIsLoading] = useState(false);
     const [errors, setErrors] = useState<FormErrors>({});
     const [serverError, setServerError] = useState<string | null>(null);
+    const [showPreferencesModal, setShowPreferencesModal] = useState(false);
     const [formData, setFormData] = useState({
         firstName: "",
         lastName: "",
@@ -132,150 +134,168 @@ export default function RegisterPage() {
                 return;
             }
 
-            router.push("/auth/login?registered=true");
+            // Show preferences modal instead of redirecting
+            setIsLoading(false);
+            setShowPreferencesModal(true);
         } catch {
             setServerError("Erreur de connexion au serveur");
             setIsLoading(false);
         }
     };
 
+    const handlePreferencesComplete = () => {
+        router.push("/browse");
+    };
+
+    const handlePreferencesSkip = () => {
+        router.push("/browse");
+    };
+
     return (
-        <Card className="border-border shadow-xl w-full max-w-3xl mx-auto">
-            <CardHeader className="space-y-1 text-center">
-                <CardTitle className="text-2xl font-bold text-primary">
-                    Create an account
-                </CardTitle>
-                <CardDescription>Join thousands of professionals today</CardDescription>
-            </CardHeader>
-            <form onSubmit={handleSubmit}>
-                <CardContent className="py-2">
-                    <FieldGroup className="gap-4">
-                        {serverError && (
-                            <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-lg">
-                                {serverError}
-                            </div>
-                        )}
-
-                        <div className="grid grid-cols-2 gap-3">
-                            <Field data-invalid={!!errors.firstName}>
-                                <FieldLabel htmlFor="firstName">First name</FieldLabel>
-                                <Input
-                                    id="firstName"
-                                    placeholder="John"
-                                    value={formData.firstName}
-                                    onChange={handleChange}
-                                />
-                                <FieldError>{errors.firstName}</FieldError>
-                            </Field>
-
-                            <Field data-invalid={!!errors.lastName}>
-                                <FieldLabel htmlFor="lastName">Last name</FieldLabel>
-                                <Input
-                                    id="lastName"
-                                    placeholder="Doe"
-                                    value={formData.lastName}
-                                    onChange={handleChange}
-                                />
-                                <FieldError>{errors.lastName}</FieldError>
-                            </Field>
-                        </div>
-
-                        <Field data-invalid={!!errors.birthdate}>
-                            <FieldLabel>Date of birth</FieldLabel>
-                            <Popover>
-                                <PopoverTrigger
-                                    className={cn(
-                                        "w-full justify-start text-left font-normal inline-flex items-center h-9 px-3 rounded-md border border-input bg-transparent text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                                        !formData.birthdate && "text-muted-foreground"
-                                    )}
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {formData.birthdate ? (
-                                        format(formData.birthdate, "dd MMMM yyyy", { locale: fr })
-                                    ) : (
-                                        <span>Choisir une date</span>
-                                    )}
-                                </PopoverTrigger>
-                                <PopoverContent className="w-auto p-0" align="start">
-                                    <Calendar
-                                        mode="single"
-                                        selected={formData.birthdate}
-                                        onSelect={handleDateChange}
-                                        captionLayout="dropdown"
-                                        fromYear={1925}
-                                        toYear={new Date().getFullYear() - 18}
-                                        defaultMonth={
-                                            formData.birthdate ||
-                                            new Date(new Date().getFullYear() - 25, 0)
-                                        }
-                                    />
-                                </PopoverContent>
-                            </Popover>
-                            <FieldError>{errors.birthdate}</FieldError>
-                        </Field>
-
-                        <Field data-invalid={!!errors.email}>
-                            <FieldLabel htmlFor="email">Email</FieldLabel>
-                            <Input
-                                id="email"
-                                type="email"
-                                placeholder="m@example.com"
-                                value={formData.email}
-                                onChange={handleChange}
-                            />
-                            <FieldError>{errors.email}</FieldError>
-                        </Field>
-
-                        <Field data-invalid={!!errors.password}>
-                            <FieldLabel htmlFor="password">Password</FieldLabel>
-                            <Input
-                                id="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={handleChange}
-                            />
-                            <FieldError>{errors.password}</FieldError>
-                        </Field>
-
-                        <Field data-invalid={!!errors.confirmPassword}>
-                            <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                            />
-                            <FieldError>{errors.confirmPassword}</FieldError>
-                        </Field>
-
-                        <Button
-                            type="submit"
-                            disabled={isLoading}
-                            className="w-full"
-                            size="lg"
-                        >
-                            {isLoading ? (
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                                <>
-                                    Create Account <ArrowRight className="w-4 h-4 ml-2" />
-                                </>
+        <>
+            {showPreferencesModal && (
+                <PreferencesModal
+                    onComplete={handlePreferencesComplete}
+                    onSkip={handlePreferencesSkip}
+                />
+            )}
+            <Card className="border-border shadow-xl w-full max-w-3xl mx-auto">
+                <CardHeader className="space-y-1 text-center">
+                    <CardTitle className="text-2xl font-bold text-primary">
+                        Create an account
+                    </CardTitle>
+                    <CardDescription>Join thousands of professionals today</CardDescription>
+                </CardHeader>
+                <form onSubmit={handleSubmit}>
+                    <CardContent className="py-2">
+                        <FieldGroup className="gap-4">
+                            {serverError && (
+                                <div className="bg-destructive/10 text-destructive text-sm p-3 rounded-lg">
+                                    {serverError}
+                                </div>
                             )}
-                        </Button>
-                    </FieldGroup>
-                </CardContent>
-            </form>
-            <CardFooter className="flex flex-col gap-4 text-center py-4">
-                <div className="text-sm text-muted-foreground">
-                    Already have an account?{" "}
-                    <Link
-                        href="/auth/login"
-                        className="font-medium text-primary hover:underline hover:text-primary/80"
-                    >
-                        Sign in
-                    </Link>
-                </div>
-            </CardFooter>
-        </Card>
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <Field data-invalid={!!errors.firstName}>
+                                    <FieldLabel htmlFor="firstName">First name</FieldLabel>
+                                    <Input
+                                        id="firstName"
+                                        placeholder="John"
+                                        value={formData.firstName}
+                                        onChange={handleChange}
+                                    />
+                                    <FieldError>{errors.firstName}</FieldError>
+                                </Field>
+
+                                <Field data-invalid={!!errors.lastName}>
+                                    <FieldLabel htmlFor="lastName">Last name</FieldLabel>
+                                    <Input
+                                        id="lastName"
+                                        placeholder="Doe"
+                                        value={formData.lastName}
+                                        onChange={handleChange}
+                                    />
+                                    <FieldError>{errors.lastName}</FieldError>
+                                </Field>
+                            </div>
+
+                            <Field data-invalid={!!errors.birthdate}>
+                                <FieldLabel>Date of birth</FieldLabel>
+                                <Popover>
+                                    <PopoverTrigger
+                                        className={cn(
+                                            "w-full justify-start text-left font-normal inline-flex items-center h-9 px-3 rounded-md border border-input bg-transparent text-sm ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                                            !formData.birthdate && "text-muted-foreground"
+                                        )}
+                                    >
+                                        <CalendarIcon className="mr-2 h-4 w-4" />
+                                        {formData.birthdate ? (
+                                            format(formData.birthdate, "dd MMMM yyyy", { locale: fr })
+                                        ) : (
+                                            <span>Choisir une date</span>
+                                        )}
+                                    </PopoverTrigger>
+                                    <PopoverContent className="w-auto p-0" align="start">
+                                        <Calendar
+                                            mode="single"
+                                            selected={formData.birthdate}
+                                            onSelect={handleDateChange}
+                                            captionLayout="dropdown"
+                                            fromYear={1925}
+                                            toYear={new Date().getFullYear() - 18}
+                                            defaultMonth={
+                                                formData.birthdate ||
+                                                new Date(new Date().getFullYear() - 25, 0)
+                                            }
+                                        />
+                                    </PopoverContent>
+                                </Popover>
+                                <FieldError>{errors.birthdate}</FieldError>
+                            </Field>
+
+                            <Field data-invalid={!!errors.email}>
+                                <FieldLabel htmlFor="email">Email</FieldLabel>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="m@example.com"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                />
+                                <FieldError>{errors.email}</FieldError>
+                            </Field>
+
+                            <Field data-invalid={!!errors.password}>
+                                <FieldLabel htmlFor="password">Password</FieldLabel>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                />
+                                <FieldError>{errors.password}</FieldError>
+                            </Field>
+
+                            <Field data-invalid={!!errors.confirmPassword}>
+                                <FieldLabel htmlFor="confirmPassword">Confirm Password</FieldLabel>
+                                <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                />
+                                <FieldError>{errors.confirmPassword}</FieldError>
+                            </Field>
+
+                            <Button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full"
+                                size="lg"
+                            >
+                                {isLoading ? (
+                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                ) : (
+                                    <>
+                                        Create Account <ArrowRight className="w-4 h-4 ml-2" />
+                                    </>
+                                )}
+                            </Button>
+                        </FieldGroup>
+                    </CardContent>
+                </form>
+                <CardFooter className="flex flex-col gap-4 text-center py-4">
+                    <div className="text-sm text-muted-foreground">
+                        Already have an account?{" "}
+                        <Link
+                            href="/auth/login"
+                            className="font-medium text-primary hover:underline hover:text-primary/80"
+                        >
+                            Sign in
+                        </Link>
+                    </div>
+                </CardFooter>
+            </Card>
+        </>
     );
 }
