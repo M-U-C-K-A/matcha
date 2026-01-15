@@ -22,9 +22,8 @@ export async function getUserNotifcation(
 		JOIN profiles p ON p.id = n.other_id
 		LEFT JOIN photos ph
 			ON ph.user_id = p.id
-			AND ph.profile_picture = true
+		AND ph.profile_picture = true
 		WHERE n.user_id = $1
-		  AND n.is_read = false
 		ORDER BY n.sent_at DESC
 		`,
 		[userId]
