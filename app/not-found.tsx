@@ -10,7 +10,7 @@ export default function NotFound() {
                 <HeartCrack className="w-24 h-24 text-[#FD5D68] relative z-10" />
             </div>
 
-            <h2 className="font-serif text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+            <h2 className="font-outfit text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
                 Heartbreak!
             </h2>
 
