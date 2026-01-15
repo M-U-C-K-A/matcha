@@ -59,10 +59,14 @@ export async function hasUserNotification(
 
 	const result = await pool.query(
 		`
-		SELECT 1 FROM notifications WHERE
-		user_id = $1`,
+		SELECT 1
+		FROM notifications
+		WHERE user_id = $1
+		AND is_read = false
+		LIMIT 1
+		`,
 		[userId]
-	)
+	);
 
 	if (result.rowCount && result.rowCount > 0) {
 		return true;
