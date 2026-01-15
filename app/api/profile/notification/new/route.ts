@@ -1,4 +1,4 @@
-import { getUserNotifcation } from "@/lib/services/profile/notification";
+import { hasUserNotification } from "@/lib/services/profile/notification";
 import getUserIdFromToken from "@/lib/utils/middleware";
 import { API_ERRORS, API_SUCCESS } from "@/lib/utils/response";
 import { NextRequest, NextResponse } from "next/server";
@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
 	}
 
 	try {
-		const result = await getUserNotifcation(
+		const result = await hasUserNotification(
 			userId
 		)
 

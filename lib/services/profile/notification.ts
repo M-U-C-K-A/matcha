@@ -1,7 +1,7 @@
 import pool from "@/lib/db";
 import { existingUser } from "@/lib/utils/existing";
 
-export default async function getUserNotifcation(
+export async function getUserNotifcation(
 	userId: string) {
 
 	if (await !existingUser(userId)) {
@@ -32,4 +32,46 @@ export default async function getUserNotifcation(
 	);
 
 	return result.rows;
+}
+
+export async function seenUserNotification(
+	userId: string,
+	notifId: string ) {
+	
+	if (await !existingUser(userId)) {
+		throw ({
+			message: 'User not found'
+		});
+	}
+
+	await pool.query(`
+		UPDATE notifications
+		SET is_read = true
+		WHERE user_id = $1 AND id = $2`,
+		[userId, notifId]
+	)
+
+	return ;
+}
+
+export async function hasUserNotification(
+	userId: string ) : Promise<boolean> {
+	if (await !existingUser(userId)) {
+		throw ({
+			message: 'User not found'
+		});
+	}
+
+	const result = await pool.query(
+		`
+		SELECT 1 FROM notifications WHERE
+		user_id = $1`,
+		[userId]
+	)
+
+	if (result.rowCount && result.rowCount > 0) {
+		return true;
+	}
+
+	return false;
 }

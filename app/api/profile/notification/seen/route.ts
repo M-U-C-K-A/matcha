@@ -1,10 +1,10 @@
-import { getUserNotifcation } from "@/lib/services/profile/notification";
+import { seenUserNotification } from "@/lib/services/profile/notification";
 import getUserIdFromToken from "@/lib/utils/middleware";
 import { API_ERRORS, API_SUCCESS } from "@/lib/utils/response";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
-	if (req.method != 'GET') {
+export async function POST(req: NextRequest) {
+	if (req.method != 'POST') {
 		return NextResponse.json (
 			{ error: API_ERRORS.METHOD_FORBIDDEN },
 			{ status: 405 }
@@ -19,13 +19,18 @@ export async function GET(req: NextRequest) {
 		)
 	}
 
+	const body = await req.json();
+
+	const { notifId } = body;
+
 	try {
-		const result = await getUserNotifcation(
-			userId
+		const result = await seenUserNotification(
+			userId,
+			notifId
 		)
 
 		return NextResponse.json (
-			result,
+			{ message: API_SUCCESS.OK },
 			{ status: 200 }
 		);
 	} catch (err: any) {
