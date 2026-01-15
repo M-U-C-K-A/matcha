@@ -1,8 +1,8 @@
-import { API_ERRORS, API_SUCCESS } from "@/lib/utils/response";
+import { API_ERRORS } from "@/lib/utils/response";
 import createProfile from "@/lib/services/auth/register";
 import { RegisterSchema } from "@/lib/types/auth";
 import { NextRequest, NextResponse } from "next/server";
-import { SignJWT } from 'jose';
+import createCookie from "@/lib/utils/createCookie";
 
 const JWT_SECRET = process.env.JWT_SECRET
 
@@ -37,26 +37,7 @@ export async function POST(req: NextRequest) {
 			password
 		);
 
-		console.log(result);
-
-		const token = await new SignJWT({ id: result })
-		.setProtectedHeader({ alg: 'HS256' })
-		.setExpirationTime('7d')
-		.sign(new TextEncoder().encode(JWT_SECRET));
-
-		const response = NextResponse.json(
-			{ message: API_SUCCESS.CREATED },
-			{ status: 201 });
-			response.cookies.set('token', token, {
-			httpOnly: true,
-			secure: process.env.NODE_ENV === 'production',
-			sameSite: 'lax',
-			path: '/',
-			maxAge: 7 * 24 * 60 * 60,
-		});
-
-		return response;
-
+		return createCookie(result);
 	} catch (err: any) {
 		if (err.message === 'Email already used') {
 			return NextResponse.json (
