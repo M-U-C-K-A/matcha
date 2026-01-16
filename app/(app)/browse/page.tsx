@@ -260,7 +260,7 @@ export default function BrowsePage() {
                     {filteredProfiles.map((profile) => (
                         <Link
                             key={profile.id}
-                            href={`/profile/${profile.username}`}
+                            href={`/users/${profile.username}`}
                             className="group relative h-[400px] overflow-hidden rounded-xl bg-muted transition-all hover:scale-[1.02] hover:shadow-xl focus:scale-[1.02] focus:shadow-xl focus:outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring"
                         >
                             {/* Image Layer */}
