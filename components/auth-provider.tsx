@@ -10,7 +10,7 @@ interface AuthContextType {
 	isLoading: boolean;
 	isAuthenticated: boolean;
 	login: (token: string, user: User) => void;
-	logout: () => void;
+	logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -34,11 +34,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 				if (data.authenticated && data.userId) {
 					setTokenState("authenticated"); // We don't have the actual token, just the status
-					// Try to get user from localStorage (user info is not sensitive)
-					const storedUser = getUser();
-					if (storedUser) {
-						setUserState(storedUser);
-					}
+					// Set user from API response
+					const userFromApi: User = {
+						id: data.userId,
+						username: data.username,
+						email: data.email,
+						firstName: data.firstname,
+						lastName: data.lastname,
+						avatar: data.avatar,
+					};
+					setUserState(userFromApi);
+					setUser(userFromApi); // Also store in localStorage
 				}
 			} catch (error) {
 				console.error('Auth check failed:', error);
@@ -74,7 +80,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 		router.push("/browse");
 	};
 
-	const logout = () => {
+	const logout = async () => {
+		try {
+			await fetch('/api/auth/logout', { method: 'POST' });
+		} catch (error) {
+			console.error('Logout API call failed:', error);
+		}
 		removeToken();
 		removeUser();
 		setTokenState(null);
