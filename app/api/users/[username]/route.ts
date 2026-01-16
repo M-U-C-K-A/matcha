@@ -23,7 +23,8 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
 
 	try {
 		const result = await getProfileByUsername(
-			username,
+			userId,
+			username
 		);
 
 		if (!result) {
@@ -39,8 +40,8 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
 		);
 	} catch (err: any) {
 		return NextResponse.json (
-			{ error: API_ERRORS.INTERNAL_ERROR },
-			{ status: 500 }
+			{ error: err.message },
+			{ status: 403 }
 		);
 	}
 }
