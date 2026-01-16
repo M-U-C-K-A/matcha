@@ -1,8 +1,6 @@
 import getUserIdFromToken from "@/lib/utils/middleware";
-import { API_ERRORS, API_SUCCESS } from "@/lib/utils/response";
-import { EditProfileSchema } from "@/lib/types/profile";
+import { API_ERRORS } from "@/lib/utils/response";
 import { NextRequest, NextResponse } from "next/server";
-import editProfile from "@/lib/services/profile/edit";
 import { getProfileByUsername } from "@/lib/services/profile/getProfileByUsername";
 
 export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
