@@ -32,6 +32,7 @@ export async function GET(req: NextRequest, { params }: { params: { username: st
 				{ status: 404 }
 			);
 		}
+
 		return NextResponse.json (
 			result,
 			{ status: 200 },
