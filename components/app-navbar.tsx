@@ -11,6 +11,7 @@ import { Button, buttonVariants } from "@/components/ui/button"
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuGroup,
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
@@ -110,30 +111,33 @@ export function AppNavbar() {
                         <DropdownMenu>
                             <DropdownMenuTrigger className="relative h-8 w-8 rounded-full outline-none">
                                 <Avatar className="h-8 w-8">
-                                    <AvatarImage src="/avatars/01.png" alt="@shadcn" />
-                                    <AvatarFallback>SC</AvatarFallback>
+                                    <AvatarFallback>
+                                        {user?.firstName?.slice(0, 2).toUpperCase() || "U"}
+                                    </AvatarFallback>
                                 </Avatar>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent className="w-56" align="end">
-                                <DropdownMenuLabel className="font-normal">
-                                    <div className="flex flex-col space-y-1">
-                                        <p className="text-sm font-medium leading-none">{user?.username || user?.firstName || "User"}</p>
-                                        <p className="text-xs leading-none text-muted-foreground">
+                                <DropdownMenuGroup>
+                                    <div className="px-2 py-1.5">
+                                        <p className="text-sm font-medium leading-none">
+                                            {user?.firstName} {user?.lastName}
+                                        </p>
+                                        <p className="text-xs leading-none text-muted-foreground mt-1">
                                             {user?.email || ""}
                                         </p>
                                     </div>
-                                </DropdownMenuLabel>
-                                <DropdownMenuSeparator />
-                                <DropdownMenuItem>
-                                    <Link href="/profile" className="flex items-center w-full">
-                                        <User className="mr-2 h-4 w-4" />
-                                        <span>Profile</span>
+                                    <DropdownMenuSeparator />
+                                    <Link href="/profile">
+                                        <DropdownMenuItem className="cursor-pointer">
+                                            <User className="mr-2 h-4 w-4" />
+                                            <span>Profile</span>
+                                        </DropdownMenuItem>
                                     </Link>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={logout} className="cursor-pointer">
-                                    <LogOut className="mr-2 h-4 w-4" />
-                                    <span>Log out</span>
-                                </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => logout()} className="cursor-pointer">
+                                        <LogOut className="mr-2 h-4 w-4" />
+                                        <span>Log out</span>
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </nav>
