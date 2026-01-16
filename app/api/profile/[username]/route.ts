@@ -1,9 +1,11 @@
-import { hasUserNotification } from "@/lib/services/profile/notification";
 import getUserIdFromToken from "@/lib/utils/middleware";
-import { API_ERRORS } from "@/lib/utils/response";
+import { API_ERRORS, API_SUCCESS } from "@/lib/utils/response";
+import { EditProfileSchema, usernameSchema } from "@/lib/types/profile";
 import { NextRequest, NextResponse } from "next/server";
+import editProfile from "@/lib/services/profile/edit";
+import { getProfileByUsername } from "@/lib/services/profile/getProfileByUsername";
 
-export async function GET(req: NextRequest) {
+export async function GET(req: NextRequest, { params }: { params: { username: string } }) {
 	if (req.method != 'GET') {
 		return NextResponse.json (
 			{ error: API_ERRORS.METHOD_FORBIDDEN },
@@ -19,23 +21,24 @@ export async function GET(req: NextRequest) {
 		)
 	}
 
+	const { username } = await params;
+
 	try {
-		const result = await hasUserNotification(
-			userId
+		const result = await getProfileByUsername(
+			username,
 		)
 
-		return NextResponse.json (
-			{ result },
-			{ status: 200 }
-		);
-	} catch (err: any) {
-		if (err.message === 'User not found') {
+		if (!result) {
 			return NextResponse.json (
 				{ error: API_ERRORS.NOT_FOUND },
 				{ status: 404 }
 			)
 		}
-
+		return NextResponse.json (
+			result,
+			{ status: 200 },
+		)
+	} catch (err: any) {
 		return NextResponse.json (
 			{ error: API_ERRORS.INTERNAL_ERROR },
 			{ status: 500 }
